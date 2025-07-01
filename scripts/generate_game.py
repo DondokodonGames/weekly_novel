@@ -9,7 +9,7 @@ from datetime import datetime
 
 # 日付ベースの企画ファイルと出力先を指定
 today = datetime.today().strftime("%Y-%m-%d")
-input_path = Path(f"企画/{today}.md")
+input_path = Path(f"plans/{today}.md")
 output_path = Path(f"output/{today}")
 output_path.mkdir(parents=True, exist_ok=True)
 
