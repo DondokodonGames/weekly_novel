@@ -31,8 +31,12 @@ prompt = f"""
 {plan}
 """
 
-response = openai.ChatCompletion.create(
-    model="gpt-4-turbo",
+from openai import OpenAI
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+response = client.chat.completions.create(
+    model="gpt-4",
     messages=[
         {"role": "system", "content": "あなたはゲーム開発者であり、ノベルエンジン用のコードを生成します。"},
         {"role": "user", "content": prompt}
@@ -40,7 +44,7 @@ response = openai.ChatCompletion.create(
     temperature=0.7
 )
 
-html_code = response["choices"][0]["message"]["content"]
+html_code = response.choices[0].message.content
 
 # 出力ファイルに保存
 with open(output_path / "game.html", "w", encoding="utf-8") as f:
