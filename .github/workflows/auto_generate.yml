@@ -2,8 +2,8 @@ name: Auto Generate Weekly Novel
 
 on:
   schedule:
-    - cron: "0 0 * * 5" # UTCで金曜0時＝日本時間 金曜9時
-  workflow_dispatch:    # 手動起動も可能
+    - cron: "0 0 * * 5"  # 毎週金曜午前9時 (JST)
+  workflow_dispatch:      # 手動実行も可能
 
 jobs:
   build:
@@ -23,3 +23,9 @@ jobs:
         run: python scripts/generate_game.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Upload generated game
+        uses: actions/upload-artifact@v3
+        with:
+          name: generated-game
+          path: output/**/*.html
