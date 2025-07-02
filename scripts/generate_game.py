@@ -2,6 +2,7 @@
 
 import os
 import json
+import shutil
 from pathlib import Path
 from datetime import datetime
 from openai import OpenAI
@@ -13,9 +14,15 @@ today = datetime.today().strftime("%Y-%m-%d")
 
 meta_path = Path(f"output/{today}/chapter_meta.json")
 policy_path = Path("config/generate_policy.md")
+template_path = Path("engine_template")
 output_dir = Path(f"output/{today}/tyrano/")
 script_dir = output_dir / "data/scenario"
-script_dir.mkdir(parents=True, exist_ok=True)
+
+# ============ テンプレートの複製 ============
+
+if output_dir.exists():
+    shutil.rmtree(output_dir)
+shutil.copytree(template_path, output_dir)
 
 # ============ 入力ファイルの確認 ============
 
@@ -66,4 +73,4 @@ for ch in meta:
 scenario_content = "\n".join([f'[call storage="{f}"]' for f in chapter_files])
 (script_dir / "scenario.ks").write_text(scenario_content, encoding="utf-8")
 
-print(f"✅ TyranoScriptデータを生成しました → {script_dir}")
+print(f"✅ TyranoScriptテンプレートと.ksスクリプトを出力しました → {script_dir}")
