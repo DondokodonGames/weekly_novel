@@ -55,9 +55,12 @@ def generate_ks_script(chapter):
 
 # ============ 各章の.ksファイルを生成 ============
 
+meta = json.loads(meta_path.read_text(encoding="utf-8"))
+policy_text = policy_path.read_text(encoding="utf-8")
+
 chapter_files = []
 
-for ch in meta:
+for ch in meta["chapters"]:
     print(f"🎬 Generating Chapter {ch['chapter_index']}: {ch['title']}")
     ks_code = generate_ks_script(ch)
     fname = f"chapter{ch['chapter_index']}.ks"
