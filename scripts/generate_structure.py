@@ -27,17 +27,19 @@ prompt = f"""
 - summary: 内容の要約（日本語）
 - backgrounds: 章で使用される背景画像ファイル名リスト（例: "bg_station_day.jpg"）
 - bgm: 使用されるBGMファイル名（例: "bgm_tension.mp3"）
-- characters: 登場するキャラクターID（例: "angry", "player"）
+- characters: 登場するキャラクターID（例: "angry_f", "player_m", "narration_x"）※性別サフィックスを含めてください
 - lines: 以下の構造のセリフリスト
-    - character: キャラID（narrationなども可）
-    - voice_file: 自動命名された音声ファイル名（例: "angry_001.mp3"）
+    - character: キャラID（narration_x なども可）
+    - voice_file: 自動命名された音声ファイル名（例: "angry_f_001.mp3"）
     - text: セリフ本文（20〜50文字）
 
 【命名ルール】
 - 背景画像: bg_場所_時間帯.jpg
 - BGM: bgm_雰囲気.mp3
-- 立ち絵: キャラID_表情.png（例: angry_smile.png）
-- ボイス: キャラID_連番3桁.mp3（例: angry_001.mp3）
+- 立ち絵: キャラID_表情.png（例: angry_f_smile.png）
+- ボイス: キャラID_連番3桁.mp3（例: angry_f_001.mp3）
+- キャラIDには必ず性別サフィックスを含めてください：
+  - 女性: `_f` / 男性: `_m` / 不定・地の文: `_x`
 
 以下が企画本文です：
 
