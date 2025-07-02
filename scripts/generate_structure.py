@@ -1,50 +1,62 @@
+# scripts/generate_structure.py
+
 import os
-from datetime import datetime
+import json
 from pathlib import Path
+from datetime import datetime
 from openai import OpenAI
 
-# OpenAIクライアント初期化
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# 今日の日付を取得
 today = datetime.today().strftime("%Y-%m-%d")
 
-# 入力・出力パスの設定
-input_path = Path(f"plans/{today}.md")
+plan_path = Path(f"plans/{today}.md")
 output_path = Path(f"output/{today}")
 output_path.mkdir(parents=True, exist_ok=True)
 
-# 入力ファイルの読み込み
-if not input_path.exists():
-    raise FileNotFoundError(f"企画ファイルが存在しません: {input_path}")
+if not plan_path.exists():
+    raise FileNotFoundError(f"企画ファイルが存在しません: {plan_path}")
 
-with input_path.open("r", encoding="utf-8") as f:
-    plan_text = f.read()
+plan_text = plan_path.read_text(encoding="utf-8")
 
-# プロンプト構築
+# プロンプトで構造抽出を依頼（素材情報含む）
 prompt = f"""
-以下は、ノベルゲームの初期企画です。この企画をもとに：
+以下はノベルゲームの企画書です。この内容から以下の構造を含むJSONを出力してください：
 
-1. 面白さ・テーマ性・構造的魅力を分析してください。
-2. 分岐・選択肢・キャラクター感情変化などを含んだ、1時間相当の構成（5章＋エピローグ）を設計してください。
-3. 各章は章タイトル・状況・選択肢の概要を含み、後でスクリプト化できる粒度で出力してください。
+- chapter_index: 数値で順番
+- title: 各章のタイトル
+- summary: 内容の要約（日本語）
+- backgrounds: 章で使用される背景画像ファイル名リスト（例: "bg_station_day.jpg"）
+- bgm: 使用されるBGMファイル名（例: "bgm_tension.mp3"）
+- characters: 登場するキャラクターID（例: "angry", "player"）
+- lines: 以下の構造のセリフリスト
+    - character: キャラID（narrationなども可）
+    - voice_file: 自動命名された音声ファイル名（例: "angry_001.mp3"）
+    - text: セリフ本文（20〜50文字）
 
-# 企画原文:
+【命名ルール】
+- 背景画像: bg_場所_時間帯.jpg
+- BGM: bgm_雰囲気.mp3
+- 立ち絵: キャラID_表情.png（例: angry_smile.png）
+- ボイス: キャラID_連番3桁.mp3（例: angry_001.mp3）
+
+以下が企画本文です：
+
+---
 {plan_text}
+---
 """
 
-# 新しいAPI形式で呼び出し
-response = client.chat.completions.create(
+res = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
-        {"role": "system", "content": "あなたはゲームデザイナーであり、ノベルゲームの設計と構造を分析・構築する役割です。"},
+        {"role": "system", "content": "あなたはプロのゲームディレクターです。JSON構造でノベルゲームの章構成と素材指定を出力してください。"},
         {"role": "user", "content": prompt}
     ],
-    temperature=0.7
+    temperature=0.6
 )
 
-# 出力をファイルに保存
-result_text = response.choices[0].message.content
-(output_path / "structure.md").write_text(result_text, encoding="utf-8")
+structured_json = res.choices[0].message.content.strip()
 
-print(f"構造設計ファイルを保存しました: {output_path / 'structure.md'}")
+# 保存
+(output_path / "chapter_meta.json").write_text(structured_json, encoding="utf-8")
+print(f"✅ chapter_meta.json を保存しました → {output_path/'chapter_meta.json'}")
