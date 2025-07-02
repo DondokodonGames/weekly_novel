@@ -1,10 +1,10 @@
 import os
 from datetime import datetime
 from pathlib import Path
-import openai
+from openai import OpenAI
 
-# 環境変数からOpenAI APIキーを取得
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# OpenAIクライアント初期化
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # 今日の日付を取得
 today = datetime.today().strftime("%Y-%m-%d")
@@ -21,7 +21,7 @@ if not input_path.exists():
 with input_path.open("r", encoding="utf-8") as f:
     plan_text = f.read()
 
-# プロンプト構築：企画→分析→構造出力
+# プロンプト構築
 prompt = f"""
 以下は、ノベルゲームの初期企画です。この企画をもとに：
 
@@ -33,8 +33,8 @@ prompt = f"""
 {plan_text}
 """
 
-# ChatGPT呼び出し（GPT-4 Turbo推奨モデル）
-response = openai.ChatCompletion.create(
+# 新しいAPI形式で呼び出し
+response = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
         {"role": "system", "content": "あなたはゲームデザイナーであり、ノベルゲームの設計と構造を分析・構築する役割です。"},
@@ -43,9 +43,8 @@ response = openai.ChatCompletion.create(
     temperature=0.7
 )
 
-# 出力結果の保存
-result_text = response["choices"][0]["message"]["content"]
-
+# 出力をファイルに保存
+result_text = response.choices[0].message.content
 (output_path / "structure.md").write_text(result_text, encoding="utf-8")
 
 print(f"構造設計ファイルを保存しました: {output_path / 'structure.md'}")
