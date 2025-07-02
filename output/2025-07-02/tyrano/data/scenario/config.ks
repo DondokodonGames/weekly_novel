@@ -1,0 +1,1 @@
+; TyranoScript config

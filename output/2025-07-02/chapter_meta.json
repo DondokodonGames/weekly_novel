@@ -1,0 +1,92 @@
+{
+  "art_style": "アニメ風",
+  "sound_mood": "クラシック",
+  "visual_theme": "落ち着いた",
+  "chapters": [
+    {
+      "chapter_index": 1,
+      "title": "駅での出会い",
+      "summary": "何でも怒る女性が駅で些細なことに怒りを爆発させる。",
+      "backgrounds": "bg_station_day.jpg",
+      "bgm": "bgm_quiet.mp3",
+      "characters": ["angry_f", "player_m", "narration_x"],
+      "lines": [
+        {
+          "character": "angry_f",
+          "voice_file": "angry_f_001.mp3",
+          "text": "何でこんなに人が多いの！？"
+        },
+        {
+          "character": "player_m",
+          "voice_file": "player_m_001.mp3",
+          "text": "少し落ち着いて、話しましょうか。"
+        },
+        {
+          "character": "narration_x",
+          "voice_file": "narration_x_001.mp3",
+          "text": "主人公は静かに話しかける。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 2,
+      "title": "カフェでの対話",
+      "summary": "カフェに移動し、冷静になった二人が本心を語り始める。",
+      "backgrounds": "bg_cafe_day.jpg",
+      "bgm": "bgm_calm.mp3",
+      "characters": ["angry_f", "player_m"],
+      "lines": [
+        {
+          "character": "angry_f",
+          "voice_file": "angry_f_002.mp3",
+          "text": "ごめんなさい、さっきは怒りすぎたわ。"
+        },
+        {
+          "character": "player_m",
+          "voice_file": "player_m_002.mp3",
+          "text": "大丈夫ですよ、何か悩みがあるんですか？"
+        }
+      ]
+    },
+    {
+      "chapter_index": 3,
+      "title": "帰り道の真実",
+      "summary": "帰り道、主人公のやさしさに心を開き、彼女は本当の気持ちを明かす。",
+      "backgrounds": "bg_sidewalk_night.jpg",
+      "bgm": "bgm_emotional.mp3",
+      "characters": ["angry_f", "player_m"],
+      "lines": [
+        {
+          "character": "angry_f",
+          "voice_file": "angry_f_003.mp3",
+          "text": "実は、仕事がうまくいかなくて…"
+        },
+        {
+          "character": "player_m",
+          "voice_file": "player_m_003.mp3",
+          "text": "それは大変でしたね。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 4,
+      "title": "最後の会話",
+      "summary": "室内での最後の会話。彼女は涙を流しながら笑顔を見せる。",
+      "backgrounds": "bg_room_night.jpg",
+      "bgm": "bgm_soft.mp3",
+      "characters": ["angry_f", "player_m"],
+      "lines": [
+        {
+          "character": "angry_f",
+          "voice_file": "angry_f_004.mp3",
+          "text": "ありがとう、あなたのおかげで心が軽くなったわ。"
+        },
+        {
+          "character": "player_m",
+          "voice_file": "player_m_004.mp3",
+          "text": "いつでも話してください。僕はここにいます。"
+        }
+      ]
+    }
+  ]
+}
