@@ -27,16 +27,19 @@ def generate_tts_voice(text: str, path: Path, speaker="default"):
     # ここにTTS連携処理を組み込む予定（現在は仮）
     create_dummy_voice(path)
 
-# ============ 音声ファイル生成処理 ============
+# ============ メタファイル確認 ============
 
 if not meta_path.exists():
     raise FileNotFoundError(f"メタファイルが見つかりません: {meta_path}")
 
 meta = json.loads(meta_path.read_text(encoding="utf-8"))
 
+# ============ ボイス生成 ============
+
 generated = set()
 
-for ch in meta:
+# 修正点：meta["chapters"] をループ
+for ch in meta.get("chapters", []):
     for line in ch.get("lines", []):
         vfile = line["voice_file"]
         text = line["text"]
