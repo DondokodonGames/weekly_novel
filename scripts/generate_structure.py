@@ -18,17 +18,22 @@ if not plan_path.exists():
 
 plan_text = plan_path.read_text(encoding="utf-8")
 
-# プロンプトで構造抽出を依頼（素材情報含む）
+# プロンプトで構造抽出を依頼（素材情報・演出方針含む）
 prompt = f"""
 以下はノベルゲームの企画書です。この内容から以下の構造を含むJSONを出力してください：
 
-- chapter_index: 数値で順番
-- title: 各章のタイトル
-- summary: 内容の要約（日本語）
-- backgrounds: 章で使用される背景画像ファイル名リスト（例: "bg_station_day.jpg"）
-- bgm: 使用されるBGMファイル名（例: "bgm_tension.mp3"）
-- characters: 登場するキャラクターID（例: "angry_f", "player_m", "narration_x"）※性別サフィックスを含めてください
-- lines: 以下の構造のセリフリスト
+- art_style: アートスタイル（例: アニメ風、写実風、手書き風）
+- sound_mood: サウンドの雰囲気（例: ローファイ、クラシック、緊張感）
+- visual_theme: 表示の雰囲気・画面演出トーン（例: 明るい、落ち着いた、陰鬱）
+
+- chapters: 各章について以下の情報をリスト形式で記述してください：
+  - chapter_index: 数値で順番
+  - title: 各章のタイトル
+  - summary: 内容の要約（日本語）
+  - backgrounds: 使用される背景画像ファイル名（例: "bg_station_day.jpg"）
+  - bgm: 使用されるBGMファイル名（例: "bgm_tension.mp3"）
+  - characters: 登場キャラクターID（例: "angry_f", "player_m", "narration_x"）
+  - lines: セリフリスト（構造下記）
     - character: キャラID（narration_x なども可）
     - voice_file: 自動命名された音声ファイル名（例: "angry_f_001.mp3"）
     - text: セリフ本文（20〜50文字）
@@ -51,7 +56,10 @@ prompt = f"""
 res = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
-        {"role": "system", "content": "あなたはプロのゲームディレクターです。JSON構造でノベルゲームの章構成と素材指定を出力してください。"},
+        {
+            "role": "system",
+            "content": "あなたはプロのゲームディレクターです。JSON構造でノベルゲームの章構成と演出方針を出力してください。"
+        },
         {"role": "user", "content": prompt}
     ],
     temperature=0.6
