@@ -23,9 +23,10 @@ if not meta_path.exists():
 
 meta = json.loads(meta_path.read_text(encoding="utf-8"))
 
-# prompt拡張用情報
-art_style = meta[0].get("art_style", "anime style")
-visual_theme = meta[0].get("visual_theme", "soft lighting")
+# === 修正点：metaの形式をdictとして扱う ===
+art_style = meta.get("art_style", "anime style")
+visual_theme = meta.get("visual_theme", "soft lighting")
+chapters = meta.get("chapters", [])
 
 # キャラID + 表情 -> prompt生成
 def character_prompt(char_id, expression):
@@ -58,7 +59,7 @@ def generate_image(prompt, out_path, placeholder):
 
 # 背景画像を生成
 all_backgrounds = set()
-for ch in meta:
+for ch in chapters:
     all_backgrounds.update(ch.get("backgrounds", []))
 
 for bg_name in all_backgrounds:
@@ -67,22 +68,22 @@ for bg_name in all_backgrounds:
         prompt = background_prompt(bg_name)
         generate_image(prompt, out_path, placeholder_bg)
 
-# キャラID + 表情パターンを抽出（仮：normal固定 → 全表情）
-expression_set = set()
+# キャラID + 表情パターンを抽出
+detected_expressions = set()
 char_expression_map = {}
 
-for ch in meta:
+for ch in chapters:
     for line in ch.get("lines", []):
         char_id = line.get("character")
         voice_file = line.get("voice_file", "")
-        if not char_id or char_id.endswith("_x"):  # ナレーションは除外
+        if not char_id or char_id.endswith("_x"):
             continue
         if "_" in voice_file:
             parts = voice_file.replace(".mp3", "").split("_")
             expression = parts[2] if len(parts) >= 3 else "normal"
         else:
             expression = "normal"
-        expression_set.add(expression)
+        detected_expressions.add(expression)
         char_expression_map.setdefault(char_id, set()).add(expression)
 
 # 立ち絵生成
@@ -94,4 +95,4 @@ for char_id, expressions in char_expression_map.items():
             prompt = character_prompt(char_id, expr)
             generate_image(prompt, out_path, placeholder_fg)
 
-print(f"✅ 画像素材生成完了（背景: {len(all_backgrounds)}枚 / キャラ: {len(char_expression_map)}人 / 表情: {len(expression_set)}種）")
+print(f"✅ 画像素材生成完了（背景: {len(all_backgrounds)}枚 / キャラ: {len(char_expression_map)}人 / 表情: {len(detected_expressions)}種）")
