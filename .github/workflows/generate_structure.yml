@@ -32,6 +32,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git add output/
           git commit -m '構造設計ファイルを自動生成' || echo "No changes to commit"
-          git push
+          git push origin HEAD:main
