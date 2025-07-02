@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'plans/*.md'
-
+  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
