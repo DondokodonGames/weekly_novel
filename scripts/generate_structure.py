@@ -2,6 +2,7 @@
 
 import os
 import json
+import re
 from pathlib import Path
 from datetime import datetime
 from openai import OpenAI
@@ -18,7 +19,7 @@ if not plan_path.exists():
 
 plan_text = plan_path.read_text(encoding="utf-8")
 
-# プロンプトで構造抽出を依頼（素材情報・演出方針含む）
+# ===== プロンプト定義（演出方針も含む） =====
 prompt = f"""
 以下はノベルゲームの企画書です。この内容から以下の構造を含むJSONを出力してください：
 
@@ -53,6 +54,7 @@ prompt = f"""
 ---
 """
 
+# ===== OpenAI 呼び出し =====
 res = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
@@ -65,8 +67,11 @@ res = client.chat.completions.create(
     temperature=0.6
 )
 
-structured_json = res.choices[0].message.content.strip()
+# ===== JSON部分を抽出（```json ～ ``` 対応） =====
+raw_content = res.choices[0].message.content.strip()
+match = re.search(r"```json\s*(\{.*\})\s*```", raw_content, re.DOTALL)
+structured_json = match.group(1) if match else raw_content
 
-# 保存
+# ===== 保存 =====
 (output_path / "chapter_meta.json").write_text(structured_json, encoding="utf-8")
 print(f"✅ chapter_meta.json を保存しました → {output_path/'chapter_meta.json'}")
