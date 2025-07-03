@@ -3,17 +3,14 @@
 import os
 import json
 import re
-import shutil
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from pydub.generators import Sine
-from pydub import AudioSegment
 
 
 def sanitize(name: str) -> str:
     """
-    ファイル名として安全な文字列に変換
+    ファイルシステム上で安全な文字列に変換
     英数字・アンダースコア・ハイフン以外をアンダースコアに置換する
     """
     return re.sub(r'[^0-9A-Za-z_-]', '_', name)
@@ -21,12 +18,11 @@ def sanitize(name: str) -> str:
 
 def create_dummy_voice(path: Path):
     """
-    ダミーのボイス生成（300msのビープ音）
+    ダミーのボイスプレースホルダーを生成（テキストファイル化）
     将来的にTTS連携を実装可能
     """
-    tone = Sine(880).to_audio_segment(duration=300)
-    tone.export(path, format="mp3")
-    print(f"🎤 Created dummy voice: {path.name}")
+    path.write_text("[Voice] placeholder", encoding="utf-8")
+    print(f"🎤 Created dummy voice placeholder: {path.name}")
 
 
 def generate_tts_voice(text: str, path: Path, speaker: str = "default"):
@@ -34,12 +30,11 @@ def generate_tts_voice(text: str, path: Path, speaker: str = "default"):
     TTS音声合成フック
     現在はダミー実装、後でTTS API連携を追加
     """
-    # TODO: integrate real TTS service (e.g., OpenAI, VoiceVox)
     create_dummy_voice(path)
 
 
 def main():
-    # APIキー／Tゾーン準備
+    # 日付(JST)と出力ディレクトリ
     tz = ZoneInfo("Asia/Tokyo")
     today = datetime.now(tz).strftime("%Y-%m-%d")
     output_dir = Path("output") / today
