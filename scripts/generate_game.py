@@ -9,7 +9,6 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from openai import OpenAI
 
-
 def main():
     # APIキー取得
     api_key = os.getenv("OPENAI_API_KEY")
@@ -32,10 +31,10 @@ def main():
     print(f"✅ Copied template to {output_dir}")
 
     # パス定義
-    tyra_dir = output_dir / "tyrano"
-    data_dir = output_dir / "data"
+    tyra_dir    = output_dir / "tyrano"
+    data_dir    = output_dir / "data"
     scenario_dir = data_dir / "scenario"
-    system_dir = data_dir / "system"
+    system_dir   = data_dir / "system"
 
     # 2) scenario/system をクリアして再作成
     for d in (scenario_dir, system_dir):
@@ -50,11 +49,12 @@ def main():
     if not subdirs:
         raise FileNotFoundError(f"No previous output directory found in {output_base}")
     latest_meta_dir = subdirs[-1]
-    meta_path = latest_meta_dir / "chapter_meta.json"
+    meta_path       = latest_meta_dir / "chapter_meta.json"
     if not meta_path.exists():
+        print(f"⚠ Meta file not found: {meta_path}. Running generate_structure.py")
         subprocess.run(["python", "scripts/generate_structure.py"], check=True)
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
-    chapters = meta.get("chapters", [])
+    chapters      = meta.get("chapters", [])
     character_map = meta.get("character_map", {})
 
     # 4) ポリシー読み込み
@@ -63,6 +63,7 @@ def main():
 
     # 生成関数（safe ID対応）
     def generate_script(ch):
+        # プロンプトにポリシーとキャラマップを含める
         prompt = f"""{policy_text}
 
 # キャラクターIDマッピング
@@ -74,12 +75,19 @@ def main():
         res = client.chat.completions.create(
             model="gpt-4-turbo",
             messages=[
-                {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。キャラクターIDはマッピングに従い、storageパスに安全なIDを使用してください。"},
-                {"role": "user",   "content": prompt}
+                {
+                    "role": "system",
+                    "content": (
+                        "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"
+                        "キャラクターIDはマッピングに従い、storageパスに安全なIDを使用してください。"
+                    )
+                },
+                {"role": "user", "content": prompt}
             ],
             temperature=0.8
         )
         ks_code = res.choices[0].message.content
+
         # storageパス内の生ID→safeID変換
         for raw, safe in character_map.items():
             ks_code = ks_code.replace(f'storage="{raw}', f'storage="{safe}')
@@ -90,20 +98,21 @@ def main():
     chapter_files = []
     for ch in chapters:
         idx = ch.get("chapter_index")
-        print(f"🎬 Generating Chapter {idx}: {ch.get('title')}")
+        title = ch.get("title", "")
+        print(f"🎬 Generating Chapter {idx}: {title}")
         ks_code = generate_script(ch)
         fname = f"chapter{idx}.ks"
         (scenario_dir / fname).write_text(ks_code + "\n[return]", encoding="utf-8")
         chapter_files.append(fname)
 
-    # first.ks の生成
+    # first.ks
     (scenario_dir / "first.ks").write_text('[jump storage="title.ks"]\n', encoding="utf-8")
 
-    # scenario.ks の生成
+    # scenario.ks
     calls = "\n".join(f'[call storage="{f}"]' for f in chapter_files)
     (scenario_dir / "scenario.ks").write_text(calls, encoding="utf-8")
 
-    # title.ks の生成
+    # title.ks
     title_code = """
 ; タイトル画面
 [layopt layer=0 visible=true]
@@ -123,7 +132,7 @@ def main():
 """
     (scenario_dir / "title.ks").write_text(title_code, encoding="utf-8")
 
-    # ending.ks の生成
+    # ending.ks
     ending_code = """
 ; エンディング画面
 [layopt layer=0 visible=true]
@@ -135,7 +144,7 @@ def main():
 """
     (scenario_dir / "ending.ks").write_text(ending_code, encoding="utf-8")
 
-    # menu_button.ks の生成
+    # menu_button.ks
     menu_code = """
 ; メニュー画面カスタム
 [link storage="save.ks"    text="📌 Save"]
@@ -145,7 +154,7 @@ def main():
 """
     (system_dir / "menu_button.ks").write_text(menu_code, encoding="utf-8")
 
-    # plugin.kst の生成
+    # plugin.kst
     (system_dir / "plugin.kst").write_text("; プラグイン定義用ファイル（自動生成）\n", encoding="utf-8")
 
     # 空ファイル補完
@@ -156,5 +165,5 @@ def main():
 
     print(f"✅ TyranoScript 全体構成を生成しました → {output_dir}")
 
-
-if __name__ == "__m
+if __name__ == "__main__":
+    main()
