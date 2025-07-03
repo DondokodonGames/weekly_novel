@@ -1,70 +1,97 @@
-以下は、TyranoScriptを使用したノベルゲームの一章「室内での涙と笑顔」のスクリプト例です。この章では、主要なキャラクターが感情の変化を経験し、彼女が涙を流し、初めての笑顔を見せる瞬間が描かれます。
+以下は、ノベルゲームの「室内での真実」章のTyranoScriptを示したものです。このスクリプトは、指定された要件とフィードバックを反映しています。
 
-```ks
-[title name="室内での涙と笑顔"]
+```tyranoscript
+[title name="室内での真実"]
 
-; 背景設定
+; 初期設定
 [bg storage="room.jpg" time=1000]
-[playbgm storage="calm_theme.mp3"]
+[playbgm storage="sorrowful_theme.mp3"]
 
-; キャラクター登場
-[char name="ゆい" storage="yui_normal.png" time=500]
-[voice storage="yui_greeting.mp3"]
+; キャラクターの登場
+[char name="heroine" face="heroine_sad.png" x=200 y=300]
 
-; セリフ
-:y ゆい「こんなに辛いことがあったけど、あなたと話せて少し楽になったよ。」
+; シーンの始まり
+[l]
 [cm]
-[char name="ゆい" storage="yui_tearful.png" time=500]
-[voice storage="yui_tearful.mp3"]
-
-:y ゆい「でも、やっぱり...こんなに涙が出るなんて...」
+「ここで話すべきことがあるんだ...」
+[wt]
+[char name="heroine" face="heroine_serious.png"]
 [cm]
-[char name="ゆい" storage="yui_smiling.png" time=500]
-[voice storage="yui_laugh.mp3"]
+「私、ずっと心に傷を抱えてきたの。」
+[wt]
+[cm]
+「それが、私たちの関係にも影響していることを、今日は話そうと思う...」
+[wt]
+[cm]
 
-;y ゆい「ねえ、見て。私、笑ってる...！初めてだよ、こんなに心から笑えてるのは。」
-
-; プレイヤーの選択肢
-[select name="response" color="#bde4ff" storage="chapter_select.ks"]
-[option text="そっと抱きしめる" target="hug_scene"]
-[option text="笑顔で応える" target="smile_back_scene"]
+; 分岐の作成
+[select color="#FFB6C1" bg_color="#555555"]
+「どんな傷なの？」[jump target="branch1"]
+「話さなくてもいいよ、無理しないでね」[jump target="branch2"]
 [endselect]
 
-; 抱きしめるシーン
-*label hug_scene
-[bg storage="close_up_room.jpg" time=500]
-[char name="ゆい" storage="yui_happy.png" time=500]
-[voice storage="yui_happy.mp3"]
-
-:y ゆい「こんなに優しくしてくれて、ありがとう...」
-
+*branch1
+[char name="heroine" face="heroine_tearful.png"]
 [cm]
-[bg storage="room_night.jpg" time=1000]
-[playbgm storage="gentle_night.mp3"]
-
-;y ゆい「これからも一緒にいられるといいな...」
+「小さい頃の家庭の問題...それが原因でね。」
+[wt]
 [cm]
-[return]
-
-; 笑顔で応えるシーン
-*label smile_back_scene
-[char name="ゆい" storage="yui_laughing.png" time=500]
-[voice storage="yui_laughing.mp3"]
-
-:y ゆい「あなたの笑顔、とっても素敵...」
-
+「でも、君には全部話すべきだと思う。」
+[wt]
+[playse storage="cry.mp3"]
 [cm]
-[bg storage="room_evening.jpg" time=1000]
-[playbgm storage="uplifting_evening.mp3"]
+「（泣き声）...だから、聞いてほしいの。」
+[wt]
+[jump target="continue_conversation"]
 
-;y ゆい「これからも、一緒に笑いあいたいね。」
-
+*branch2
+[char name="heroine" face="heroine_calm.png"]
 [cm]
-[return]
+「ありがとう、無理せずに済むよ...」
+[wt]
+[cm]
+「いつか話せる日が来たら、その時は聞いてほしい。」
+[wt]
+[char name="heroine" face="heroine_smile.png"]
+[cm]
+「でも今は、ただ隣にいてほしいだけ。」
+[wt]
+[jump target="end_conversation"]
 
-; 章の終了
+*continue_conversation
+[cm]
+「本当にありがとう、君がいてくれて良かったよ。」
+[wt]
+[playse storage="relief.mp3"]
+[char name="heroine" face="heroine_smiling.png"]
+[cm]
+「これからも一緒にいようね。」
+[wt]
+[jump target="close_scene"]
+
+*end_conversation
+[char name="heroine" face="heroine_peaceful.png"]
+[playbgm storage="calm_theme.mp3"]
+[cm]
+「あなたのそばにいるだけで、心が落ち着くの。」
+[wt]
+[jump target="close_scene"]
+
+*close_scene
+[char name="heroine" face="heroine_normal.png"]
+[wt]
+[cm]
+「じゃあ、またね。」
+[wt]
 [end]
+
 ```
 
-このスクリプトでは、背景変更、キャラクターの表情変更、BGMの再生、ボイスの再生など、感情の起伏とシーンの変化を盛り込んでいます。また、プレイヤーの選択によって異なる結末が描かれます。
+このスクリプトは以下の要素を含んでいます：
+- 背景音楽と環境音
+- キャラクターの感情表現を示すポートレートの変更
+- プレーヤーの選択による物語の分岐
+- 感情の起伏を示すセリフとシナリオの進行
+
+これにより、プレイヤーは感情に引き込まれる体験をすることができます。
 [return]

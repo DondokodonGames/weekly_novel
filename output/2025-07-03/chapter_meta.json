@@ -1,12 +1,12 @@
 {
   "art_style": "アニメ風",
-  "sound_mood": "ピアノ主体で静かめ",
+  "sound_mood": "ピアノ主体の静かめ",
   "visual_theme": "夜の公園で話すような、静かでやさしい空気感",
   "chapters": [
     {
       "chapter_index": 1,
       "title": "駅での出会い",
-      "summary": "駅構内で怒りっぽい女性が小さな出来事に怒りを爆発させる。",
+      "summary": "何にでも怒ってしまう女性が駅での些細な出来事から怒りを爆発させる。",
       "backgrounds": [
         "bg_station_day.jpg"
       ],
@@ -18,14 +18,14 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_001.mp3",
-          "text": "何でこんなことになってるの！？"
+          "text": "なんてことするの！？"
         }
       ]
     },
     {
       "chapter_index": 2,
       "title": "カフェでの誤解",
-      "summary": "カフェで主人公がやさしく誤解を解いていく。",
+      "summary": "主人公が彼女を落ち着かせようとカフェに誘い、誤解を解き始める。",
       "backgrounds": [
         "bg_cafe_day.jpg"
       ],
@@ -37,18 +37,18 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_002.mp3",
-          "text": "そうだったの？私、全然違うことを思ってた…"
+          "text": "私、そんなつもりじゃなかったのに..."
         }
       ]
     },
     {
       "chapter_index": 3,
-      "title": "帰り道の解放",
-      "summary": "帰り道、彼女はさらに心を開き、誤解が解けていく。",
+      "title": "帰り道の和解",
+      "summary": "主人公と彼女は帰り道で心を通わせる。",
       "backgrounds": [
-        "bg_path_night.jpg"
+        "bg_street_night.jpg"
       ],
-      "bgm": "bgm_relief.mp3",
+      "bgm": "bgm_soothing.mp3",
       "characters": [
         "angry_f"
       ],
@@ -56,14 +56,14 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_003.mp3",
-          "text": "こんなに話せるなんて、初めてかも。ありがとう。"
+          "text": "ごめんなさい、ありがとう..."
         }
       ]
     },
     {
       "chapter_index": 4,
-      "title": "室内での涙と笑顔",
-      "summary": "最後の室内での会話。彼女は涙を流し、はじめての笑顔を見せる。",
+      "title": "室内での真実",
+      "summary": "最後の会話で彼女は心の傷を明かし、涙を流す。",
       "backgrounds": [
         "bg_room_night.jpg"
       ],
@@ -75,7 +75,7 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_004.mp3",
-          "text": "こんなに優しくしてもらえるなんて思わなかった…ありがとう、本当に。"
+          "text": "こんなに優しくしてくれる人がいるなんて思わなかった..."
         }
       ]
     }

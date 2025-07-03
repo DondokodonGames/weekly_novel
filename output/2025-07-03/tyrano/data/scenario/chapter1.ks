@@ -1,70 +1,72 @@
-以下は、TyranoScriptを使用したノベルゲームの章「駅での出会い」のスクリプト例です。この章では、プレイヤーが怒りっぽい女性キャラクターとの初めての出会いを経験します。プレイヤーの選択によって物語の進行が変わる分岐点も設けています。
+## TyranoScriptの基本構成例
+
+以下は、ノベルゲームの章「駅での出会い」の導入部分をTyranoScriptを用いて記述したスクリプトの具体例です。このスクリプトは、前述の制作方針とフィードバックを元に構成されています。
 
 ```tyranoscript
 [title name="駅での出会い"]
 
-; 背景画像とBGMの設定
+; 初期設定
+[s]
 [bg storage="station.jpg" time=1000]
-[playbgm storage="ambient_station.mp3" loop=true]
+[playbgm storage="ambient_station.mp3"]
 
-; 怒りっぽい女性キャラクターの登場
-[char name="カナ" storage="kana_angry.png" time=500]
-[ptext page=false]
-「何よ、その顔！邪魔なんだけど！」
-[endptext]
+; 主人公（ナレーション）
+[cm]
+[ct]
+[chara_show name="主人公" storage="protagonist_normal.png" jname=""]
+[playse storage="footsteps.mp3"]
+「ここはいつもの駅。毎朝の通勤で訪れるけれど、今日は何か空気が違う気がする...」
 
-; ボイスファイルの再生
-[voice storage="kana_angry_001.mp3"]
+; 女性キャラクター登場
+[chara_show name="怒りやすい女性" storage="angry_woman_normal.png" jname="美咲"]
+[playse storage="sudden_noise.mp3"]
+[cm]
+「すみません、ちょっとそこどいてもらえますか？」[p]
+「あれ？ あなた、もしかして...」
 
-[ptext]
-彼女は、駅のホームで小さなバッグを地に叩きつけながら、怒りを露わにしています。
-[endptext]
-
-; プレイヤーの選択肢を提供
-[select color="#FFFFFF" bg="menu_bg.png"]
-「すみません、気を悪くさせるつもりはありませんでした」[jump target="apologize"]
-「なぜそんなに怒っているんですか？」[jump target="ask_reason"]
+; 選択肢
+[select name="first_meeting" color="#FFFFFF" storage=""]
+[option text="「はい、何かご用ですか？」" target="response_friendly"]
+[option text="「えっ、と、あの...」" target="response_confused"]
 [endselect]
 
-*apologize
-[ptext page=false]
-「あなたがそう言うなら、仕方ないわね。でも、気をつけてよね！」
-[endptext]
-[voice storage="kana_relief_001.mp3"]
-[jump target="continue_story"]
+*response_friendly
+[cm]
+「はい、何かご用ですか？」[p]
+「いえ、その... ここにいたら邪魔だからどいてほしいの。」[p]
+「そうですか、分かりました。」[p]
+[cm]
+[trans time=1000]
+[bg storage="cafe.jpg"]
+[playbgm storage="calm_breeze.mp3"]
+[chara_hide name="怒りやすい女性"]
+[chara_show name="怒りやすい女性" storage="angry_woman_calm.png"]
+「ここはもっと静かね。ありがとう、あなたのおかげよ。」
+[trans time=1000]
 
-*ask_reason
-[ptext page=false]
-「それが知りたいの？ 私の日はもう最悪なの！ 今にも泣きそうよ！」
-[endptext]
-[voice storage="kana_angry_002.mp3"]
-[jump target="continue_story"]
+*response_confused
+[cm]
+「えっ、と、あの...」[p]
+「ちょっと、あなた、どいてって言ってるのに！」[p]
+[chara_hide name="怒りやすい女性"]
+[chara_show name="怒りやすい女性" storage="angry_woman_angry.png"]
+「もういい！ 私一人でどうにかするから！」
+[bg storage="station_crowded.jpg" time=1000]
+[playse storage="crowd_noise.mp3"]
 
-*continue_story
-[ptext]
-どうやら彼女は、今日一日の出来事によって精神的に不安定な様子です。
-[endptext]
+; 章の終了と次のシナリオへのリンク
+[cm]
+[s]
+[link storage="next_chapter.ks" target="*start" text="次の章へ"]
 
-[ptext]
-私は彼女を落ち着かせるために、近くのカフェへ誘うことにしました。
-[endptext]
-
-; シーンの遷移
-[trans time=2000]
-[bg storage="cafe.jpg" time=1000]
-[playbgm storage="cafe_bgm.mp3" loop=true]
-[ptext]
-カフェに着くと、彼女は少し落ち着きを取り戻したようです。
-[endptext]
-
-[ptext]
-「ごめんなさい、さっきはちょっと…」と彼女が静かに謝ると、私は笑って「気にしないで」と返しました。
-[endptext]
-
-; エピローグへの準備
-[wait time=3000]
-[end]
 ```
 
-このスクリプトは、各セリフにボイスファイルを割り当て、キャラクターの感情を効果的に伝える音楽と背景画像の切り替えを含みます。また、選択肢による分岐を設けており、プレイヤーの選択が物語の展開に直接的な影響を及ぼします。
+このスクリプトでは、以下の要素が実装されています：
+- 背景画像とBGMの変更によるシーンの遷移
+- キャラクターの登場と感情表現の変化
+- 効果音の利用
+- プレイヤーの選択による物語の分岐
+- 次のシナリオへのリンク
+
+このように各章をファイル分割し、`scenario.ks` から順番に呼び出すことで、シームレスなゲーム体験を提供します。
 [return]
