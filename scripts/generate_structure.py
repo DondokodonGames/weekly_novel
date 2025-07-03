@@ -9,6 +9,14 @@ from zoneinfo import ZoneInfo
 from openai import OpenAI
 
 
+def sanitize(name: str) -> str:
+    """
+    ファイルシステム上で安全な文字列に変換
+    英数字・アンダースコア・ハイフン以外はアンダースコアに置換する
+    """
+    return re.sub(r'[^0-9A-Za-z_-]', '_', name)
+
+
 def main():
     # APIキー取得
     api_key = os.getenv("OPENAI_API_KEY")
@@ -22,18 +30,17 @@ def main():
     output_dir = Path("output") / today
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # 企画ファイル格納ディレクトリ (plans/ またはプロジェクトルート)
+    # 企画ファイル取得 (plans/ またはルート)
     plans_dir = Path("plans")
     if plans_dir.exists():
-        md_list = sorted(plans_dir.glob("*.md"), key=lambda p: p.name)
+        md_files = sorted(plans_dir.glob("*.md"))
     else:
-        md_list = sorted(Path(".").glob("*.md"), key=lambda p: p.name)
-    if not md_list:
+        md_files = sorted(Path(".").glob("*.md"))
+    if not md_files:
         raise FileNotFoundError("No markdown (.md) planning file found.")
-    plan_path = md_list[-1]
+    plan_path = md_files[-1]
     print(f"🎯 使用中の企画ファイル: {plan_path}")
 
-    # 企画書テキスト読み込み
     plan_text = plan_path.read_text(encoding="utf-8")
 
     # ポリシーファイル読み込み
@@ -46,28 +53,25 @@ def main():
 
 以下はノベルゲームの企画書です。この内容から以下の構造を含むJSONを出力してください。
 
-- art_style: アートスタイル（例: アニメ風、写実風、手書き風）
-- sound_mood: サウンドの雰囲気（例: ローファイ、クラシック、緊張感）
+- art_style: アートスタイル
+- sound_mood: サウンドの雰囲気
 - visual_theme: 表示の雰囲気・画面演出トーン
-
-- chapters: 各章について下記をリストで出力
-   - chapter_index: 数値
-   - title: タイトル
-   - summary: 要約
-   - backgrounds: ["bg_station_day.jpg", …]
-   - bgm: "bgm_tension.mp3"
-   - characters: ["angry_f", …]
-   - lines:
-       - character: キャラID
-       - voice_file: "angry_f_001.mp3"
-       - text: セリフ本文
-
+- chapters: リスト
+    - chapter_index: 数値
+    - title: 章タイトル
+    - summary: 要約
+    - backgrounds: 画像リスト
+    - bgm: BGMファイル名
+    - characters: キャラクターIDリスト
+    - lines: セリフリスト
+        - character: キャラクターID
+        - voice_file: ボイスファイル名
+        - text: セリフ本文
 ---
 {plan_text}
 ---
 """
 
-    # GPT呼び出し
     res = client.chat.completions.create(
         model="gpt-4-turbo",
         messages=[
@@ -76,10 +80,9 @@ def main():
         ],
         temperature=0.6
     )
-
     raw = res.choices[0].message.content.strip()
 
-    # Markdownフェンスの除去
+    # Markdownフェンス除去
     if raw.startswith("```"):
         raw = re.sub(r"^```(?:json)?", "", raw)
         raw = re.sub(r"```$", "", raw).strip()
@@ -90,10 +93,25 @@ def main():
     except json.JSONDecodeError:
         m = re.search(r"\{.*\}", raw, re.DOTALL)
         if not m:
-            # 解析不能な場合は生データを保存
             (output_dir / "latest_raw.txt").write_text(raw, encoding="utf-8")
             raise
         data = json.loads(m.group(0))
+
+    # キャラクター名のサニタイズとマッピング
+    character_map = {}
+    for ch in data.get("chapters", []):
+        for line in ch.get("lines", []):
+            char_id = line.get("character")
+            if not char_id:
+                continue
+            safe = sanitize(char_id)
+            character_map[char_id] = safe
+            line["safe_character"] = safe
+        # 各章の characters も safe_characters として追加
+        raw_chars = ch.get("characters", [])
+        ch["safe_characters"] = [character_map.get(c, sanitize(c)) for c in raw_chars]
+
+    data["character_map"] = character_map
 
     # JSON保存
     meta_path = output_dir / "chapter_meta.json"
