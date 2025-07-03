@@ -65,8 +65,14 @@ if template_base.exists():
     src_system = template_base / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
+    # その他のデータ資産（images, bgm, video, sound など）
+    src_data = template_base / "data"
+    for sub in src_data.iterdir():
+        if sub.is_dir() and sub.name not in ["scenario", "system"]:
+            dst = tyra_dir / "data" / sub.name
+            shutil.copytree(sub, dst, dirs_exist_ok=True)
 
-# ============ スクリプト生成関数 ============
+# ============ スクリプト生成関数 ====================
 def generate_ks_script(chapter):
     prompt = f"""
 {policy_text}
