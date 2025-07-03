@@ -3,11 +3,11 @@
 import os
 import json
 import re
-import requests
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from openai import OpenAI
+from urllib.request import urlopen
 
 
 def sanitize(name: str) -> str:
@@ -21,7 +21,7 @@ def sanitize(name: str) -> str:
 def generate_dalle_image(prompt: str, output_path: Path):
     """
     DALL·E API で背景画像を生成し保存
-    失敗時は placeholder を書き込む
+    失敗時は placeholder テキストを出力
     """
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
@@ -32,7 +32,7 @@ def generate_dalle_image(prompt: str, output_path: Path):
             size="1024x1024"
         )
         url = response.data[0].url
-        img_data = requests.get(url).content
+        img_data = urlopen(url).read()
         output_path.write_bytes(img_data)
         print(f"🖼️ Generated background: {output_path.name}")
     except Exception as e:
@@ -87,15 +87,15 @@ def main():
             prompt = f"{Path(bg).stem.replace('_',' ')}, background for visual novel, no people"
             generate_dalle_image(prompt, out_path)
 
-    # BGM プレースホルダー
+    # BGM placeholder
     for bgm in all_bgms:
         safe_name = sanitize(bgm)
         out_path = bgm_dir / safe_name
         if not out_path.exists():
             out_path.write_text("[BGM] placeholder", encoding="utf-8")
-            print(f"🎵 Created dummy BGM: {safe_name}")
+            print(f"🎵 Created dummy BGM placeholder: {safe_name}")
 
-    # キャラ立ち絵プレースホルダー
+    # キャラ立ち絵 placeholder
     for raw in raw_chars:
         safe = character_map.get(raw, sanitize(raw))
         char_dir = fg_root / safe
@@ -106,12 +106,12 @@ def main():
                 out_path.write_text("[FG] placeholder", encoding="utf-8")
                 print(f"🖼️ Created placeholder FG: {safe}/{expr}.png")
 
-    # ボイスプレースホルダー
+    # ボイス placeholder
     for entry in voice_entries:
         out_path = voice_dir / entry["voice_file"]
         if not out_path.exists():
             out_path.write_text(entry["text"], encoding="utf-8")
-            print(f"🎤 Created dummy voice: {entry['voice_file']}")
+            print(f"🎤 Created dummy voice placeholder: {entry['voice_file']}")
 
     print(f"✅ Asset generation complete: backgrounds={len(all_backgrounds)}, bgms={len(all_bgms)}, chars={len(raw_chars)}, voices={len(voice_entries)}")
 
