@@ -1,0 +1,135 @@
+{
+  "art_style": "リアルで感情表現豊かなキャラクターデザイン",
+  "sound_mood": "静かでピアノ主体のBGM、感情の高まりを感じさせる曲調",
+  "visual_theme": "夜の公園のような静かでやさしい雰囲気",
+  "chapters": [
+    {
+      "chapter_index": 1,
+      "title": "駅での出会い",
+      "summary": "主人公が駅で怒りっぽい女性と出会う。彼女は些細なことで怒るが、主人公は静かに接する。",
+      "backgrounds": [
+        "station.jpg"
+      ],
+      "bgm": "calm_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "main_character"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "angry_001.mp3",
+          "text": "何でこんなに人が多いの！？",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "main_character",
+          "voice_file": "calm_response_001.mp3",
+          "text": "少し込んでいますね。大丈夫ですか？",
+          "safe_character": "main_character"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "main_character"
+      ]
+    },
+    {
+      "chapter_index": 2,
+      "title": "カフェでの対話",
+      "summary": "カフェで座って落ち着いた後、主人公は彼女の怒りの理由を探り、少しずつ心を開かせる。",
+      "backgrounds": [
+        "cafe.jpg"
+      ],
+      "bgm": "soft_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "main_character"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "angry_002.mp3",
+          "text": "ここのコーヒー、いつも冷めてるのよね。",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "main_character",
+          "voice_file": "calm_response_002.mp3",
+          "text": "少し冷めているかもしれませんね。温かいのをお願いしましょうか？",
+          "safe_character": "main_character"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "main_character"
+      ]
+    },
+    {
+      "chapter_index": 3,
+      "title": "帰り道",
+      "summary": "帰り道、主人公は彼女がなぜ怒りやすいのかの本質に迫る。彼女は自分の過去を語り始める。",
+      "backgrounds": [
+        "street.jpg"
+      ],
+      "bgm": "rising_emotion_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "main_character"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "angry_003.mp3",
+          "text": "私、本当はこんなに怒りたくないの...",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "main_character",
+          "voice_file": "calm_response_003.mp3",
+          "text": "大丈夫ですよ。ゆっくり話してください。",
+          "safe_character": "main_character"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "main_character"
+      ]
+    },
+    {
+      "chapter_index": 4,
+      "title": "最後の会話",
+      "summary": "室内での最後の会話。彼女は主人公に感謝し、初めての笑顔を見せる。",
+      "backgrounds": [
+        "indoor.jpg"
+      ],
+      "bgm": "emotional_climax_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "main_character"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "soft_smile_001.mp3",
+          "text": "あなたのおかげで、久しぶりに笑えたよ。ありがとう。",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "main_character",
+          "voice_file": "calm_response_004.mp3",
+          "text": "いえ、こちらこそありがとうございます。いつでも話しましょう。",
+          "safe_character": "main_character"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "main_character"
+      ]
+    }
+  ],
+  "character_map": {
+    "angry_woman": "angry_woman",
+    "main_character": "main_character"
+  }
+}
