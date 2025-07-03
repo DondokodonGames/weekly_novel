@@ -3,7 +3,7 @@ name: Test Novel Game Generator
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * 5"  # 毎週金曜 朝9時（JST）
+    - cron: "0 0 * * 5"  # 毎週金曜 09:00 JST
 
 jobs:
   test-build:
@@ -16,36 +16,36 @@ jobs:
       - name: 🐍 Pythonセットアップ
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: 📦 必要なライブラリをインストール
-        run: pip install -r requirements.txt
-        
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-        
-      - name: 🧱 構造データを生成 (generate_structure.py)
+      - name: ⚙️ 依存パッケージのインストール
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🏗︎ 章構造とメタ生成 (generate_structure.py)
         run: python scripts/generate_structure.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - name: 📝 スクリプト生成 (generate_game.py)
+      - name: 📝 ゲームスクリプト生成 (generate_game.py)
         run: python scripts/generate_game.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - name: 🔊 音声生成 (generate_voice.py)
-        run: python scripts/generate_voice.py
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
-      - name: 🎵 BGM生成 (generate_bgm.py)
-        run: python scripts/generate_bgm.py
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-
-      - name: 🖼️ 画像生成 (generate_image.py)
+      - name: 🖼️ 画像素材生成 (generate_image.py)
         run: python scripts/generate_image.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: 🎵 BGM素材生成 (generate_bgm.py)
+        run: python scripts/generate_bgm.py
+
+      - name: 🎤 ボイス素材生成 (generate_voice.py)
+        run: python scripts/generate_voice.py
+
+      - name: 🎨 汎用アセット生成 (generate_assets.py)
+        run: python scripts/generate_assets.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -54,5 +54,5 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
           git add output/
-          git commit -m "✅ テスト用: ゲーム素材生成" || echo "No changes to commit"
+          git commit -m "✅ テスト用: ゲーム素材自動生成" || echo "No changes to commit"
           git push origin HEAD:main
