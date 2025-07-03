@@ -47,24 +47,37 @@ policy_text = policy_path.read_text(encoding="utf-8")
 chapters = meta.get("chapters", [])
 
 # 出力先ディレクトリ
-output_dir = Path(f"output/{today}")
-tyra_dir = output_dir / "tyrano"
+output_dir = Path("output") / today
+tyra_dir    = output_dir / "tyrano"
 scenario_dir = tyra_dir / "data" / "scenario"
-system_dir = tyra_dir / "data" / "system"
+system_dir   = tyra_dir / "data" / "system"
 scenario_dir.mkdir(parents=True, exist_ok=True)
 system_dir.mkdir(parents=True, exist_ok=True)
 
 # ============ テンプレートコピー ============
-template_base = Path("engine_template")
-if template_base.exists():
-    # engine_template 自体が TyranoScript の root なので直接コピー
-    shutil.copytree(template_base, tyra_dir, dirs_exist_ok=True)
-    # system フォルダだけ別に確保
-    src_system = template_base / "data" / "system"
-    if src_system.exists():
-        shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
-    # index.html は既にコピー済み above
-    # その他の data 以下資産は一括コピー済み above
+template_root = Path("engine_template")
+if not template_root.exists():
+    raise FileNotFoundError(f"テンプレートディレクトリが見つかりません: {template_root}")
+
+# 1. TyranoScript 本体をコピー
+shutil.copytree(
+    template_root / "tyrano",
+    tyra_dir,
+    dirs_exist_ok=True
+)
+
+# 2. data フォルダ（シナリオ・画像・BGM）をコピー
+shutil.copytree(
+    template_root / "data",
+    tyra_dir / "data",
+    dirs_exist_ok=True
+)
+
+# 3. ルートの index.html をコピー
+shutil.copy(
+    template_root / "index.html",
+    output_dir / "index.html"
+)
 
 # ============ スクリプト生成関数 ============
 def generate_ks_script(chapter):
@@ -77,8 +90,8 @@ def generate_ks_script(chapter):
     res = client.chat.completions.create(
         model="gpt-4-turbo",
         messages=[
-            {"role":"system","content":"あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
-            {"role":"user","content":prompt}
+            {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
+            {"role": "user", "content": prompt}
         ],
         temperature=0.8
     )
@@ -87,12 +100,12 @@ def generate_ks_script(chapter):
 # ============ 章ファイルの生成 ============
 chapter_files = []
 for ch in chapters:
-    idx = ch.get("chapter_index")
+    idx   = ch.get("chapter_index")
     title = ch.get("title")
     print(f"🎬 Generating Chapter {idx}: {title}")
     ks_code = generate_ks_script(ch)
-    fname = f"chapter{idx}.ks"
-    path = scenario_dir / fname
+    fname   = f"chapter{idx}.ks"
+    path    = scenario_dir / fname
     path.write_text(ks_code + "\n[return]", encoding="utf-8")
     chapter_files.append(fname)
 
@@ -109,18 +122,18 @@ title_ks = scenario_dir / "title.ks"
 title_code = """
 ; タイトル画面
 [layopt layer=0 visible=true]
-[bg storage=\"bgtitle.jpg\"]
-[call storage=\"../system/menu_button.ks\"]
+[bg storage="bgtitle.jpg"]
+[call storage="../system/menu_button.ks"]
 [cm]
 [locate x=400 y=300]
-[glink storage=\"first.ks\" text=\"▶ ゲームをはじめる\"]
+[glink storage="first.ks" text="▶ ゲームをはじめる"]
 [locate x=400 y=400]
-[glink storage=\"load.ks\" text=\"📂 セーブから再開\"]
+[glink storage="load.ks" text="📂 セーブから再開"]
 [locate x=400 y=500]
-[glink storage=\"ending.ks\" text=\"✖ 終了\"]
+[glink storage="ending.ks" text="✖ 終了"]
 [s]
 *start
-[jump storage=\"chapter1.ks\"]
+[jump storage="chapter1.ks"]
 [s]
 """
 title_ks.write_text(title_code, encoding="utf-8")
@@ -130,10 +143,10 @@ ending_ks = scenario_dir / "ending.ks"
 ending_code = """
 ; エンディング画面
 [layopt layer=0 visible=true]
-[bg storage=\"bg_ending.jpg\"]
+[bg storage="bg_ending.jpg"]
 [cm]
 [locate x=400 y=300]
-[glink storage=\"title.ks\" text=\"▶ タイトルへ戻る\"]
+[glink storage="title.ks" text="▶ タイトルへ戻る"]
 [s]
 """
 ending_ks.write_text(ending_code, encoding="utf-8")
@@ -142,10 +155,10 @@ ending_ks.write_text(ending_code, encoding="utf-8")
 menu_ks = system_dir / "menu_button.ks"
 menu_code = """
 ; メニュー画面カスタム
-[link storage=\"save.ks\" text=\"📌 Save\"]
-[link storage=\"load.ks\" text=\"📂 Load\"]
-[link storage=\"backlog.ks\" text=\"📝 Log\"]
-[link storage=\"title.ks\" text=\"🏠 Title\"]
+[link storage="save.ks" text="📌 Save"]
+[link storage="load.ks" text="📂 Load"]
+[link storage="backlog.ks" text="📝 Log"]
+[link storage="title.ks" text="🏠 Title"]
 """
 menu_ks.write_text(menu_code, encoding="utf-8")
 
