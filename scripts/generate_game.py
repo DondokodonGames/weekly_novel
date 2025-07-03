@@ -14,7 +14,7 @@ today = datetime.today().strftime("%Y-%m-%d")
 meta_path = Path(f"output/{today}/chapter_meta.json")
 policy_path = Path("config/generate_policy.md")
 # TyranoScriptテンプレート本体が置かれたディレクトリ
-template_tyrano = Path("templates/tyrano")
+template_base = Path("templates/tyrano")
 
 # 出力先フォルダ
 tyrano_dir = Path(f"output/{today}/tyrano")
@@ -37,9 +37,13 @@ policy_text = policy_path.read_text(encoding="utf-8")
 chapters = meta.get("chapters", [])
 
 # ============ TyranoScript 本体コピー ============
-# テンプレートから system フォルダを丸ごとコピー
-if template_tyrano.exists():
-    src_system = template_tyrano / "data" / "system"
+if template_base.exists():
+    # engine本体（tyranoフォルダ）をコピー
+    src_engine = template_base / "tyrano"
+    if src_engine.exists():
+        shutil.copytree(src_engine, tyrano_dir, dirs_exist_ok=True)
+    # systemフォルダ（設定ファイル等）
+    src_system = template_base / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
 
@@ -74,12 +78,10 @@ for ch in chapters:
 
 # ============ first.ks を生成 ============
 first_ks = scenario_dir / "first.ks"
-first_ks.write_text("[jump storage=\"chapter1.ks\"]\n", encoding="utf-8")
+first_ks.write_text("[jump storage=\"title.ks\"]\n", encoding="utf-8")
 
-# ============ scenario.ks を生成 (線形呼び出し) ============
-scenario_content = "\n".join([
-    f'[call storage="{f}"]' for f in chapter_files
-])
+# ============ scenario.ks を生成 ============
+scenario_content = "\n".join(f'[call storage="{f}"]' for f in chapter_files)
 (scenario_dir / "scenario.ks").write_text(scenario_content, encoding="utf-8")
 
 # ============ title.ks の生成 ============
@@ -88,6 +90,7 @@ title_code = """
 ; タイトル画面
 [layopt layer=0 visible=true]
 [bg storage=\"bgtitle.jpg\"]
+[call storage=\"../system/menu_button.ks\"]  ; メニュー呼び出し
 [cm]
 [locate x=400 y=300]
 [glink storage=\"first.ks\" target=*start text=\"▶ ゲームをはじめる\"]
@@ -109,12 +112,13 @@ ending_code = """
 [layopt layer=0 visible=true]
 [bg storage=\"bg_ending.jpg\"]
 [cm]
+[locate x=400 y=300]
 [glink storage=\"title.ks\" target=*t text=\"▶ タイトルへ戻る\"]
 [s]
 """
 ending_ks.write_text(ending_code, encoding="utf-8")
 
-# ============ menu_button.ks の生成 ============
+# ============ menu_button.ks を system_dir に生成 ============
 menu_ks = system_dir / "menu_button.ks"
 menu_code = """
 ; メニュー画面カスタム
@@ -125,8 +129,12 @@ menu_code = """
 """
 menu_ks.write_text(menu_code, encoding="utf-8")
 
+# ============ plugin.kst の生成 ============
+plugin_kst = system_dir / "plugin.kst"
+plugin_kst.write_text("; プラグイン定義用ファイル（自動生成）\n", encoding="utf-8")
+
 # ============ 空ファイル / テンプレート不足補完 ============
-# 空のsave.ks, load.ks, backlog.ksも system/scenario or system に配置
+# save/load/backlog は scenario_dir に配置
 for fname in ["save.ks", "load.ks", "backlog.ks"]:
     path = scenario_dir / fname
     if not path.exists():
