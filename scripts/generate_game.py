@@ -3,6 +3,7 @@
 import os
 import json
 import shutil
+import subprocess
 from pathlib import Path
 from datetime import datetime
 from openai import OpenAI
@@ -12,7 +13,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 today = datetime.today().strftime("%Y-%m-%d")
 
-# 最新の output フォルダから chapter_meta.json を取得
+# 出力ベースおよび最新ディレクトリ検出
 output_base = Path("output")
 if not output_base.exists():
     raise FileNotFoundError(f"output ディレクトリが存在しません: {output_base}")
@@ -22,39 +23,50 @@ if not subdirs:
 subdirs.sort(key=lambda p: p.name)
 latest_dir = subdirs[-1]
 meta_path = latest_dir / "chapter_meta.json"
+
+# chapter_meta.json がないか空・不正な場合、自動で generate_structure.py を実行
 if not meta_path.exists():
-    raise FileNotFoundError(f"メタファイルが存在しません: {meta_path}")
+    print(f"⚠ メタファイルが存在しません: {meta_path} → generate_structure.py を実行します")
+    subprocess.run(["python", "scripts/generate_structure.py"], check=True)
+
+# JSON読み込み
+try:
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+except json.JSONDecodeError:
+    print(f"⚠ メタファイル読み込みエラー: {meta_path} → 再生成を試みます")
+    subprocess.run(["python", "scripts/generate_structure.py"], check=True)
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+
 print(f"🎯 使用中のメタファイル: {meta_path}")
 
-# ポリシーファイル
+# ポリシーファイル読み込み
 policy_path = Path("config/generate_policy.md")
 if not policy_path.exists():
     raise FileNotFoundError(f"ポリシーファイルが見つかりません: {policy_path}")
+policy_text = policy_path.read_text(encoding="utf-8")
+chapters = meta.get("chapters", [])
 
-# 生成先
-tyrano_dir = Path(f"output/{today}/tyrano")
-scenario_dir = tyrano_dir / "data" / "scenario"
-system_dir = tyrano_dir / "data" / "system"
+# 出力先ディレクトリ
+output_dir = Path(f"output/{today}")
+tyra_dir = output_dir / "tyrano"
+scenario_dir = tyra_dir / "data" / "scenario"
+system_dir = tyra_dir / "data" / "system"
 scenario_dir.mkdir(parents=True, exist_ok=True)
 system_dir.mkdir(parents=True, exist_ok=True)
 
-# テンプレート準拠のエンジン・システムファイルコピー
+# ============ テンプレートコピー ============
 template_base = Path("templates/tyrano")
 if template_base.exists():
+    # エンジン本体コピー
     src_engine = template_base / "tyrano"
     if src_engine.exists():
-        shutil.copytree(src_engine, tyrano_dir, dirs_exist_ok=True)
+        shutil.copytree(src_engine, tyra_dir, dirs_exist_ok=True)
+    # systemファイルコピー
     src_system = template_base / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
 
-# JSON読み込み
-with open(meta_path, encoding="utf-8") as f:
-    meta = json.load(f)
-policy_text = policy_path.read_text(encoding="utf-8")
-chapters = meta.get("chapters", [])
-
-# スクリプト生成関数
+# ============ スクリプト生成関数 ============
 def generate_ks_script(chapter):
     prompt = f"""
 {policy_text}
@@ -72,7 +84,7 @@ def generate_ks_script(chapter):
     )
     return res.choices[0].message.content
 
-# 各章の.ks作成
+# ============ 章ファイルの生成 ============
 chapter_files = []
 for ch in chapters:
     idx = ch.get("chapter_index")
@@ -80,18 +92,19 @@ for ch in chapters:
     print(f"🎬 Generating Chapter {idx}: {title}")
     ks_code = generate_ks_script(ch)
     fname = f"chapter{idx}.ks"
-    (scenario_dir / fname).write_text(ks_code + "\n[return]", encoding="utf-8")
+    path = scenario_dir / fname
+    path.write_text(ks_code + "\n[return]", encoding="utf-8")
     chapter_files.append(fname)
 
-# first.ks
+# ============ first.ks の生成 ============
 first_ks = scenario_dir / "first.ks"
 first_ks.write_text("[jump storage=\"title.ks\"]\n", encoding="utf-8")
 
-# scenario.ks
+# ============ scenario.ks の生成 ============
 scenario_content = "\n".join(f'[call storage="{f}"]' for f in chapter_files)
 (scenario_dir / "scenario.ks").write_text(scenario_content, encoding="utf-8")
 
-# title.ks
+# ============ title.ks の生成 ============
 title_ks = scenario_dir / "title.ks"
 title_code = """
 ; タイトル画面
@@ -112,7 +125,7 @@ title_code = """
 """
 title_ks.write_text(title_code, encoding="utf-8")
 
-# ending.ks
+# ============ ending.ks の生成 ============
 ending_ks = scenario_dir / "ending.ks"
 ending_code = """
 ; エンディング画面
@@ -125,7 +138,7 @@ ending_code = """
 """
 ending_ks.write_text(ending_code, encoding="utf-8")
 
-# system/menu_button.ks
+# ============ menu_button.ks の生成 ============
 menu_ks = system_dir / "menu_button.ks"
 menu_code = """
 ; メニュー画面カスタム
@@ -136,14 +149,14 @@ menu_code = """
 """
 menu_ks.write_text(menu_code, encoding="utf-8")
 
-# system/plugin.kst
+# ============ plugin.kst の生成 ============
 plugin_kst = system_dir / "plugin.kst"
 plugin_kst.write_text("; プラグイン定義用ファイル（自動生成）\n", encoding="utf-8")
 
-# 空ファイル補完
+# ============ 空ファイル補完 ============
 for fname in ["save.ks","load.ks","backlog.ks"]:
     path = scenario_dir / fname
     if not path.exists():
         path.write_text("; 自動生成ダミー\n", encoding="utf-8")
 
-print(f"✅ TyranoScript全体構成を生成しました → {tyrano_dir}")
+print(f"✅ TyranoScript全体構成を生成しました → {tyra_dir}")
