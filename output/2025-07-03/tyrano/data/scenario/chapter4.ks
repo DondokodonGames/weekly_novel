@@ -1,56 +1,89 @@
-以下は、タイトル「最後の会話」という章について、TyranoScriptの形式に基づいて生成されたシナリオスクリプトです。この章では、キャラクターが室内で重要な対話を交わし、感情の変化を体験する場面が描かれます。
+以下は、指定された「室内での解放」という章タイトルに基づいたTyranoScriptの一部です。このシナリオでは、主人公と彼女の感情的な会話を通じて、彼女が最終的に心を開く様子が描かれます。
 
-```ks
-[title name="最後の会話"]
+```tyranoscript
+;----------------------------------------
+[title name="室内での解放"]
 
 ; 背景設定
 [bg storage="room.jpg" time=1000]
-[playbgm storage="calm_theme.mp3"]
+[playbgm storage="sentimental_bgm.mp3"]
 
-; キャラクター登場
-[chara_show name="彼女" storage="heroine_normal.png" time=1000]
+; シーン開始
+[chara_show name="彼女" storage="girl_smile.png" time=1000]
 
-; オープニングのテキスト
 [cm]
 [ct]
-「ずっと、言えなかったことがあるんだ。」[p]
-彼女は少し視線を逸らしながら、静かに語り始めた。[p]
+[chara_show name="主人公" storage="protagonist_normal.png" time=1000]
+[voice storage="protagonist_start_001.mp3"]
 
-; 彼女のセリフ、感情が徐々に変わる
-[chara_mod name="彼女" storage="heroine_sad.png" time=500]
-「いつも支えてくれて、ありがとう。実は、それがすごく、すごく嬉しかった。」[p]
-[voice storage="thankful_001.mp3"]
+[layopt layer=message0 visible=true]
 
-[chara_mod name="彼女" storage="heroine_smile.png" time=500]
-「でも、私も強くなりたい。」[p]
-[voice storage="determined_002.mp3"]
-
-; 選択肢
+; 主人公のセリフ
 [s]
-選択肢１：「いつでもそばにいるよ」
-[playse storage="positive_response.mp3"]
-[chara_mod name="彼女" storage="heroine_happy.png" time=500]
-「それを聞いて、心が軽くなったよ。」[p]
-[voice storage="happy_003.mp3"]
-[jump target="happy_ending.ks"]
+「最近、どうだった？」
+[wt]
 
-選択肢２：「自分の力を信じて」
-[playse storage="supportive_response.mp3"]
-[chara_mod name="彼女" storage="heroine_determined.png" time=500]
-「ありがとう。自分でもやってみる。」[p]
-[voice storage="empowered_004.mp3"]
-[jump target="growth_ending.ks"]
+; 彼女の反応
+[voice storage="girl_response_001.mp3"]
+[chara_mod name="彼女" storage="girl_sad.png"]
+[s]
+「うん、なんとなく...寂しかったかな。」
+[wt]
 
-; 章の終了
-[end]
+; 分岐選択肢
+[select name="response" color="#FFB6C1"]
+「寂しさを感じるのは自然なことだよ」[jump target="NaturalResponse"]
+「何か楽しいことを一緒にしようか？」[jump target="OfferActivity"]
+[endselect]
+
+*NaturalResponse
+[chara_mod name="主人公" storage="protagonist_kind.png"]
+[voice storage="protagonist_response_002.mp3"]
+[s]
+「寂しさを感じるのは、誰にでもある自然なことだよ。大丈夫。」
+[wt]
+
+[jump target="SceneContinue"]
+
+*OfferActivity
+[chara_mod name="主人公" storage="protagonist_smile.png"]
+[voice storage="protagonist_offer_003.mp3"]
+[s]
+「今度、一緒に映画でもどうかな？」
+[wt]
+
+[jump target="SceneContinue"]
+
+*SceneContinue
+[chara_mod name="彼女" storage="girl_smiling.png"]
+[voice storage="girl_happy_002.mp3"]
+[s]
+「ありがとう、そうしてくれると嬉しいな。」
+[wt]
+
+; シーン終了、エンディングに向けての感情的な解放
+[chara_mod name="彼女" storage="girl_tearful_smile.png"]
+[s]
+「ずっと心に重たかったものが、少し軽くなった気がする...ありがとう。」
+[wt]
+
+[playse storage="happy_end.mp3"]
+[chara_hide name="彼女" time=1000]
+[chara_hide name="主人公" time=1000]
+
+[bg storage="end_bg.jpg" time=1500]
+[cm]
+[s]
+「（彼女の笑顔が、まるで春の花のように、部屋中を明るくしていく...）」
+[wt]
+
+[playbgm storage="ending_theme.mp3"]
+[trans time=2000]
+[endscene]
+
+; 次の章へのリンク
+[link storage="next_chapter.ks" target="*next"]
 ```
 
-### 解説：
-- **背景** (`bg`) と **BGM** (`playbgm`) はシーンの雰囲気を設定。
-- **キャラクター表示** (`chara_show`) と **モデル変更** (`chara_mod`) で感情の変化を視覚的に示す。
-- **ボイス** (`voice`) と音響効果 (`playse`) は、ダイアログの感情を強調。
-- **選択肢** (`s`) によりプレイヤーの選択がストーリーに影響を与える。
-- **ジャンプ** (`jump`) コマンドで異なるエンディングシナリオファイルへ移行。
-
-このスクリプトは、提供された方針に沿って、感情の波、キャラクターの成長、そして複数のエンディングを体験できるように設計されています。
+このシナリオは、設定した章の目的に沿ってキャラクター間の感情的な交流が描かれています。セリフの選択、背景音楽、キャラクターの表情変更など、指定されたフィードバックと制作ルールに従っています。
 [return]

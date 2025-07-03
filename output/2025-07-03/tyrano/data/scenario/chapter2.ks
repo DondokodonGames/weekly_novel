@@ -1,124 +1,98 @@
-以下は「カフェでの対話」という章の内容を表すTyranoScriptの構造です。このスクリプトは、フィードバックと制作ルールに基づいて作成されており、感情の起伏、分岐、キャラクターの描写、音声や背景の変化などが組み込まれています。
+```tyrano
+[title name="カフェでの解説"]
 
-```ks
-[module name="scenario"]
+; 背景設定とBGMの再生
+[bg storage="cafe.jpg" time=2000]
+[playbgm storage="cafe_bgm.mp3"]
 
-; タイトルと背景音楽の設定
-[title storage="chapter1_title.png"]
-[bg storage="cafe_interior.jpg" time=1000]
-[playbgm storage="casual_cafe.mp3" loop=true]
+; キャラクターの表示
+[char name="heroine" storage="heroine_normal.png" time=500 x=300 y=300]
 
-; 主人公と彼女のキャラクター表示
-[char name="hero" storage="hero_normal.png" x=300 y=400]
-[char name="girl" storage="girl_smile.png" x=600 y=400]
+; オープニングのテキスト
+[cm]
+[ct]
+[cm]
+[ptext size=30]
+主人公「ここでゆっくり話せるね。実は、前に君が思っていたこと、全部誤解だったんだ。」
+[ptext size=30 wait=false]
 
-; 開始セリフ
-[ptext page="fore" size=30]
-「ここはいつものカフェだね。いつ見ても落ち着く場所だよ。」
-[ptext page="clear"]
+; ボイス再生
+[voice storage="explanation1.mp3"]
 
-[voice storage="hero_normal_001.mp3"]
-[char name="hero" storage="hero_smile.png"]
-「君をここに招待できて嬉しいよ。何か飲みたいものはある？」
-[ptext page="clear"]
+; ヒロインのリアクション
+[char name="heroine" storage="heroine_surprise.png" time=500]
+[ptext size=30]
+ヒロイン「えっ、本当に？私、何か間違えてたの？」
+[ptext size=30 wait=false]
 
-[voice storage="girl_happy_001.mp3"]
-[char name="girl" storage="girl_think.png"]
-「うん、ありがとう。カフェラテがいいな。」
-[ptext page="clear"]
+; ボイス再生
+[voice storage="question1.mp3"]
 
-; 選択肢の提示
+; 主人公の解説
+[char name="hero" storage="hero_serious.png" time=500]
+[ptext size=30]
+主人公「うん、実はね...」
+[ptext size=30 wait=false]
+
+; ボイス再生
+[voice storage="explanation2.mp3"]
+
+; 分岐選択肢
 [select]
-「どんな話をしようか？」
-[
-  *「最近の仕事のことについて」
-    [jump target="talk_work"]
-  *「趣味の話」
-    [jump target="talk_hobby"]
-  *「二人の将来について」
-    [jump target="talk_future"]
-]
+「詳しく説明する」:
+    [jump target="detail_explanation"]
+「簡単に済ます」:
+    [jump target="simple_explanation"]
+[endselect]
 
-; 各話題の詳細内容
-*talk_work
-[bg storage="cafe_busy.jpg" time=1000]
-[playbgm storage="stressful_moment.mp3" loop=true]
-[char name="hero" storage="hero_concerned.png"]
-[ptext page="fore" size=30]
-「仕事が忙しくてなかなか会えないけど、君のことはいつも考えてるよ。」
-[ptext page="clear"]
+; 詳細な説明ルート
+*detail_explanation
+[bgm storage="serious_bgm.mp3"]
+[char name="hero" storage="hero_explain.png" time=500]
+[ptext size=30]
+主人公「それがね、この前の件は...」
+[ptext size=30 wait=false]
 
-[voice storage="girl_sad_002.mp3"]
-[char name="girl" storage="girl_sad.png"]
-「そうなんだ... 私も忙しくて、なんだか心が離れていく気がするよ。」
-[ptext page="clear"]
-[jump target="resolve_conflict"]
+; ボイス再生
+[voice storage="detailed1.mp3"]
 
-*talk_hobby
-[bg storage="cafe_calm.jpg" time=1000]
-[playbgm storage="relaxing_day.mp3" loop=true]
-[char name="hero" storage="hero_happy.png"]
-[ptext page="fore" size=30]
-「最近、何か新しい趣味を始めたの？」
-[ptext page="clear"]
+; ゲーム進行など
+[ptext size=30]
+ヒロイン「なるほど、それで私が勘違いしてたわけね。」
+[ptext size=30 wait=true]
 
-[char name="girl" storage="girl_excited.png"]
-[voice storage="girl_happy_002.mp3"]
-「実は写真を撮り始めたんだ。自然を撮るのが好きでね。」
-[ptext page="clear"]
-[jump target="share_hobby"]
+; ボイス再生
+[voice storage="understanding1.mp3"]
 
-*talk_future
-[bg storage="cafe_romantic.jpg" time=1000]
-[playbgm storage="romantic_theme.mp3" loop=true]
-[char name="hero" storage="hero_serious.png"]
-[ptext page="fore" size=30]
-「俺たちの将来について真剣に考えてみないか？」
-[ptext page="clear"]
+; 簡単な説明ルート
+*simple_explanation
+[bgm storage="light_bgm.mp3"]
+[char name="hero" storage="hero_smile.png" time=500]
+[ptext size=30]
+主人公「大したことないよ、気にしないで。」
+[ptext size=30 wait=false]
 
-[char name="girl" storage="girl_nervous.png"]
-[voice storage="girl_nervous_001.mp3"]
-「ええ、いいと思う。不安もあるけど、一緒に解決していけたら...」
-[ptext page="clear"]
-[jump target="discuss_future"]
+; ボイス再生
+[voice storage="simple1.mp3"]
 
-; ルートごとの感情解決
-*resolve_conflict
-[ptext page="fore" size=30]
-[char name="hero" storage="hero_reassuring.png"]
-「大丈夫、これからはもっと時間を作るからね。二人でいる時間を大切にしよう。」
-[ptext page="clear"]
+; ゲーム進行など
+[ptext size=30]
+ヒロイン「そう？でも、ちょっと気になるけど...」
+[ptext size=30 wait=true]
 
-[voice storage="girl_relived_001.mp3"]
-[char name="girl" storage="girl_relived.png"]
-「ありがとう、それを聞いて安心したよ。」
-[ptext page="clear"]
-[end]
+; エンディングへの遷移
+[jump target="chapter_end"]
 
-*share_hobby
-[ptext page="fore" size=30]
-[char name="hero" storage="hero_interested.png"]
-「その写真、見せてくれる？一緒に撮りに行けたらいいね。」
-[ptext page="clear"]
-
-[char name="girl" storage="girl_happy.png"]
-[voice storage="girl_excited_003.mp3"]
-「うん、今度一緒に行こう！」
-[ptext page="clear"]
-[end]
-
-*discuss_future
-[ptext page="fore" size=30]
-[char name="hero" storage="hero_determined.png"]
-「不安なことがあったら、いつでも話してね。一緒に乗り越えよう。」
-[ptext page="clear"]
-
-[char name="girl" storage="girl_confident.png"]
-[voice storage="girl_happy_003.mp3"]
-「ありがとう、そうしよう。これからもよろしくね。」
-[ptext page="clear"]
+; 章の終了
+*chapter_end
+[char clear]
+[cm]
+[bgm stop]
 [end]
 ```
 
-このスクリプトでは、各選択肢によって異なる背景音楽や背景画像が設定され、それぞれの感情の起伏に合わせてキャラクター画像とボイスも変更されます。これにより、プレイヤーはより没入感を得ることができます。
+### 注意点
+- 上記のスクリプトは、カフェでの解説シーンを想定した一部の例です。
+- 実際には、使用する画像ファイルや音声ファイルの準備が必要です。
+- キャラクターの感情や反応、背景音楽の変更など、プレイヤーの選択による体験の変化を重視しています。
 [return]

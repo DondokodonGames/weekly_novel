@@ -1,62 +1,57 @@
-以下は、章タイトル「駅での出会い」に基づいたTyranoScriptの一例です。このシナリオでは、駅で怒りっぽい女性が些細なことから怒りを爆発させる場面を描いています。
+以下は、指定された制作方針とフィードバックに基づき、TyranoScriptを用いたノベルゲームのスクリプトの例です。この例では、『駅での出会い』という章を描いています。
 
-```tyranoscript
+```tyrano
 [title name="駅での出会い"]
 
-; プロローグ
-[s]（この物語は架空の駅で繰り広げられます）
-
+; 背景の設定
 [bg storage="station.jpg" time=1000]
+
+; BGMの再生
 [playbgm storage="ambient_station.mp3" loop=true]
 
-[chara_show name="女性" storage="angry_woman.png" jname="怒り女性" x=300 y=400]
-[voice storage="voice1.mp3"]
+; キャラクター登場
+[char name="女性" storage="angry_woman.png" effect="fadeIn" time=500]
 
-; 怒り女性の初登場
-l:「どうしてこんなことになるの！？」
+; シーン開始
+[l]
+女性「何ですか、その態度は！ちゃんと謝れないのですか！？」[p][voice storage="angry_001.mp3"]
 
-[chara_mod name="女性" face="angry" ]
-[voice storage="voice_angry1.mp3"]
-l:「すみません、私の足を踏んだのはあなたですよね？ちゃんと謝ってください！」
+; プレイヤーの選択肢
+[link target="apology" storage="chapter1.ks" ]
+[s]すみません、本当に気付かなかったんです。[/s]
+[endlink]
+[link target="ignore" storage="chapter1.ks" ]
+[s]……（無視する）[/s]
+[endlink]
 
-[chara_show name="プレイヤー" storage="default_player.png" jname="あなた" x=500 y=400]
-[voice storage="voice2.mp3"]
-l:「えっ、あ、ごめんなさい…気づきませんでした。」
+; 選択肢「謝る」の場合
+*apology
+[char name="女性" reflect="true"]
+女性「まあ、いいですけど…次からはもう少し気をつけてくださいね。」[p][voice storage="relieved_001.mp3"]
+[l]
+[char name="プレイヤー" storage="main_character.png" effect="fadeIn" time=500]
+プレイヤー「ありがとうございます、気をつけます。」[p][voice storage="apology_001.mp3"]
+[l]
+[bg storage="cafe.jpg" time=1000]
+[char name="女性" storage="smile_woman.png" effect="fadeIn" time=500]
+女性「こうして落ち着いた場所で話せてよかったです。」[p][voice storage="happy_001.mp3"]
+[playbgm storage="cafe_bgm.mp3" loop=true]
+[jump target="next_chapter.ks"]
 
-; 分岐1: 謝り方
-[select name="謝り方"]
-{"心から謝る":
-    [chara_mod name="プレイヤー" face="sorry"]
-    [voice storage="voice_apology1.mp3"]
-    l:「本当に申し訳ないです。気をつけます。」
-    [jump storage="chapter2.ks" target="*"]
-,
-"適当に謝る":
-    [chara_mod name="プレイヤー" face="uninterested"]
-    [voice storage="voice_apology2.mp3"]
-    l:「あ、うん。ごめんごめん。」
-    [jump storage="chapter2.ks" target="*"]
-}
+; 選択肢「無視する」の場合
+*ignore
+[char name="女性" trans="fadeOut" time=500]
+[l]
+[char name="プレイヤー" storage="main_character_angry.png" effect="fadeIn" time=500]
+プレイヤー「（なんて無礼な…）」[p][voice storage="angry_002.mp3"]
+[l]
+[jump target="bad_end.ks"]
 
-; バックグラウンド音楽と背景画像の変更
-[bg storage="angry_scene.jpg" time=1000]
-[playbgm storage="tense_music.mp3" loop=true]
-
-[chara_mod name="女性" face="very_angry"]
-[voice storage="voice_angry2.mp3"]
-l:「それだけ！？ ちゃんと気をつけてよね！」
-
-; エンディングへの遷移
-[jump storage="endings.ks" target="*"]
+; ファイル終了
+[end]
 ```
 
-このスクリプトは以下の要素を取り入れています：
+このスクリプトでは、背景、キャラクター、音楽、ボイスの変更や、プレイヤーの選択肢とその結果によるストーリー分岐が実装されています。各選択肢は異なるシナリオファイルにジャンプします（`chapter1.ks`, `next_chapter.ks`, `bad_end.ks`）。
 
-- 各キャラクターの画像と声
-- 音楽と環境音
-- 背景画像の切り替え
-- プレイヤーの選択による分岐
-- キャラクターの感情の変化
-
-全体的に、プレイヤーが感情的な起伏を体験し、キャラクターの行動や選択がストーリーの進行に影響を与えることを重視しています。
+この例は、ノベルゲームの基本的な構造を示しており、さらに拡張していくことが可能です。
 [return]

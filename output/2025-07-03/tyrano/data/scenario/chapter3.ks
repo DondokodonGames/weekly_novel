@@ -1,75 +1,75 @@
-以下は、帰り道の解決という章のTyranoScript形式のスクリプト例です。このスクリプトの中で、キャラクター描写、分岐と変化、音声・音楽設計、ダイアログ構成、シーン遷移、およびエンディング設計のルールに従って記述しました。
+以下は、「帰り道の変化」章のためのTyranoScriptの基本的なスクリプト例です。ここでは、主人公と彼女の心の変化を表現するための会話や分岐、背景やBGMの変更を取り入れています。
 
-```tyranoscript
-[title name="帰り道の解決"]
+```ks
+[title name="帰り道の変化"]
 
-; プリロード画像と音声
-[preload storage="bg_street_evening.jpg" wait=false]
-[preload storage="bgm_calm.mp3" wait=false]
-[preload storage="char_miyu_normal.png" wait=false]
-[preload storage="char_miyu_smile.png" wait=false]
-[preload storage="char_miyu_sad.png" wait=false]
-[preload storage="voice_miyu_001.mp3" wait=false]
+; 初期設定
+[s]
+[bg storage="street_evening.jpg" time=1000]
+[playbgm storage="evening_walk.mp3"]
 
-; 背景設定
-[bg storage="bg_street_evening.jpg" time=1500]
+[chara_show name="heroine" storage="heroine_normal.png" time=500 wait=true]
 
-; BGM再生
-[playbgm storage="bgm_calm.mp3"]
+; 会話開始
+[cm]
+[voice storage="heroine_voice01.mp3"]
+heroine「今日は楽しかったね。こんなに長く一緒にいるのは初めてだけど、不思議と緊張しなかったよ。」
 
-; キャラクター表示
-[charshow name="miyu" storage="char_miyu_normal.png" time=1000]
+[voice storage="protagonist_voice01.mp3"]
+protagonist「そうだね。俺も同じだよ。おかげで、いつもと違う帰り道も新鮮に感じるよ。」
 
-; 基本セリフ
-[ptext ]
-彼女と並んで歩きながら、少し沈んだ空気を感じ取る。
-[wt]
+; 分岐1: 彼女の返答にどう反応するか
+[select link="喜ぶ" target=*branch_happy]
+[select link="複雑な気持ち" target=*branch_complex]
 
-[charshow name="miyu" storage="char_miyu_sad.png" time=500]
-[m "miyu" voice="voice_miyu_001.mp3"]
-「なんだか、すごく悩んでいるみたい…。」
+*branch_happy
+[voice storage="heroine_voice_happy.mp3"]
+[chara_mod name="heroine" storage="heroine_happy.png" ]
+heroine「わたしもだよ！またこんな風に遊びたいな。」
 
-; 選択肢
-[selselect]
-選択肢１:「何かあったの？」[jump target="Choice1"]
-選択肢２:そのまま黙ってそばにいる[jump target="Choice2"]
-[eselselect]
+[jump target="continue_conversation"]
 
-; 選択肢１: 心配する
-*Choice1
-[charshow name="miyu" storage="char_miyu_normal.png" time=500]
-[m "miyu"]
-「うん、ちょっとね…。」
+*branch_complex
+[voice storage="heroine_voice_sad.mp3"]
+[chara_mod name="heroine" storage="heroine_sad.png"]
+heroine「そうかな…私、ちょっとだけ不安だったりもするんだ。」
 
-; 会話続き
-[ptext ]
-彼女は少し話し始め、気持ちが楽になったようだ。
-[wt]
+[jump target="continue_conversation"]
 
-[jump target="CommonEnd"]
+; 会話続行
+*continue_conversation
+[voice storage="protagonist_voice02.mp3"]
+protagonist「今日のこと、忘れないよ。また一緒にどこかに行こう。」
+[voice storage="heroine_voice02.mp3"]
+heroine「うん、約束だよ！」
 
-; 選択肢２: 黙ってそばにいる
-*Choice2
-[ptext ]
-ただ黙ってそばにいる。時にはそれが一番の支えになる。
-[wt]
+; シーンの変更
+[chara_hide name="heroine" time=500 wait=true]
+[bg storage="cafe_night.jpg" time=1000]
+[playbgm storage="cafe_at_night.mp3"]
+[chara_show name="heroine" storage="heroine_cafe.png" time=500 wait=true]
 
-[jump target="CommonEnd"]
+[chara_mod name="heroine" storage="heroine_smile.png"]
+[voice storage="heroine_voice03.mp3"]
+heroine「こうしてカフェで話していると、なんだか大人っぽく感じるね。」
 
-; 共通の終わり
-*CommonEnd
-[charshow name="miyu" storage="char_miyu_smile.png" time=500]
-[ptext ]
-彼女の表情が明るくなり、手を握ってきた。「ありがとう」と小さな声でつぶやく。
-[wt]
+; エンディングへの遷移
+[l]
+heroine「次はいつ会えるかな？」
+[link target="scenario_ending.ks" storage=""]
 
-; BGMとキャラクターフェードアウト
-[fadeoutbgm time=2000]
-[charfadeout name="miyu" time=2000]
-
-; シナリオ終了
-[end]
+[er]
 ```
 
-このスクリプトは、TyranoScriptでの基本的なコマンドを使用して、キャラクターの心情変化、選択肢の提供、BGMの採用、そしてシーンの視覚的トランジションを行っています。キャラクターの表情変更や音声ファイルの割り当ても適切に行われています。これにより、プレイヤーはキャラクターとの感情的なつながりを感じることができます。
+### 説明：
+- `[title name="帰り道の変化"]`: 章のタイトルを設定
+- `[bg storage="street_evening.jpg" time=1000]`: 夕方の街の背景画像を設定
+- `[playbgm storage="evening_walk.mp3"]`: 夕方の散歩に適したBGMを再生
+- `[chara_show name="heroine" storage="heroine_normal.png" time=500 wait=true]`: ヒロインの通常の表情のキャラクターを表示
+- `[select link="..."]`: プレイヤーの選択肢を提供
+- `[chara_mod name="heroine" storage="heroine_happy.png"]`: ヒロインの表情を変更
+- `[bg storage="cafe_night.jpg" time=1000]`: 夜のカフェの背景に変更
+- `[link target="scenario_ending.ks" storage=""]`: 次のシナリオファイルへのリンクを設定
+
+このスクリプトは、ヒロインとの会話および感情変化を通じてストーリーが進行し、プレイヤーが選択によって感情の流れが変わるように設計されています。
 [return]

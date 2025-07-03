@@ -1,12 +1,12 @@
 {
   "art_style": "アニメ風",
-  "sound_mood": "ピアノ主体",
+  "sound_mood": "ピアノ主体の静かめ",
   "visual_theme": "夜の公園で話すような、静かでやさしい空気感",
   "chapters": [
     {
       "chapter_index": 1,
       "title": "駅での出会い",
-      "summary": "何にでも怒る女性が駅で些細なことから怒りを爆発させる。",
+      "summary": "何にでも怒る女性が駅で些細な出来事に怒りを爆発させる。",
       "backgrounds": [
         "bg_station_day.jpg"
       ],
@@ -18,14 +18,14 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_001.mp3",
-          "text": "なんでこんなに人が多いの！"
+          "text": "なんでこんなことになってるの！"
         }
       ]
     },
     {
       "chapter_index": 2,
-      "title": "カフェでの対話",
-      "summary": "主人公は彼女をカフェに誘い、優しく話を聞きながら誤解を解いていく。",
+      "title": "カフェでの解説",
+      "summary": "主人公はカフェで彼女に対し、やさしく誤解を解いていく。",
       "backgrounds": [
         "bg_cafe_day.jpg"
       ],
@@ -37,16 +37,35 @@
         {
           "character": "angry_f",
           "voice_file": "angry_f_002.mp3",
-          "text": "私、本当はこんなに怒りたくないの..."
+          "text": "え、それ本当にただの間違いだったの？"
         }
       ]
     },
     {
       "chapter_index": 3,
-      "title": "帰り道の解決",
-      "summary": "歩道を歩きながら、さらに彼女の心の内を探り、共感を示す。",
+      "title": "帰り道の変化",
+      "summary": "歩道を歩きながら、彼女は少しずつ心を開いていく。",
       "backgrounds": [
         "bg_sidewalk_evening.jpg"
+      ],
+      "bgm": "bgm_warming.mp3",
+      "characters": [
+        "angry_f"
+      ],
+      "lines": [
+        {
+          "character": "angry_f",
+          "voice_file": "angry_f_003.mp3",
+          "text": "こんなに話を聞いてくれる人、初めてかも…。"
+        }
+      ]
+    },
+    {
+      "chapter_index": 4,
+      "title": "室内での解放",
+      "summary": "最後の会話で、彼女は心の氷が解け、涙とともに笑顔を見せる。",
+      "backgrounds": [
+        "bg_room_night.jpg"
       ],
       "bgm": "bgm_emotional.mp3",
       "characters": [
@@ -55,27 +74,8 @@
       "lines": [
         {
           "character": "angry_f",
-          "voice_file": "angry_f_003.mp3",
-          "text": "こんなに理解してくれる人がいるなんて思わなかった..."
-        }
-      ]
-    },
-    {
-      "chapter_index": 4,
-      "title": "最後の会話",
-      "summary": "室内での最終対話。彼女は心を開き、初めての笑顔を見せる。",
-      "backgrounds": [
-        "bg_room_night.jpg"
-      ],
-      "bgm": "bgm_resolution.mp3",
-      "characters": [
-        "angry_f"
-      ],
-      "lines": [
-        {
-          "character": "angry_f",
           "voice_file": "angry_f_004.mp3",
-          "text": "ありがとう、あなたと話せて良かった。"
+          "text": "ありがとう、こんな私を受け入れてくれて…。"
         }
       ]
     }
