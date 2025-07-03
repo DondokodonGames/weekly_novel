@@ -2,24 +2,34 @@
 
 import os
 import json
-import re
 from pathlib import Path
 from datetime import datetime
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# OpenAIクライアント初期化
 today = datetime.today().strftime("%Y-%m-%d")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-plan_path = Path(f"plans/{today}.md")
-output_path = Path(f"output/{today}")
-output_path.mkdir(parents=True, exist_ok=True)
+# plansフォルダから最新の企画ファイルを選択
+plans_dir = Path("plans")
+if not plans_dir.exists():
+    raise FileNotFoundError(f"企画フォルダが存在しません: {plans_dir}")
 
-if not plan_path.exists():
-    raise FileNotFoundError(f"企画ファイルが存在しません: {plan_path}")
+# .md ファイルを取得し、ソートして最新を選択
+doc_files = sorted(plans_dir.glob("*.md"), key=lambda p: p.name)
+if not doc_files:
+    raise FileNotFoundError(f"企画ファイルが見つかりません: {plans_dir} に .md ファイルがありません")
+plan_path = doc_files[-1]
+print(f"🎯 使用中の企画ファイル: {plan_path.name}")
 
+# 出力先ディレクトリ
+today_output = Path(f"output/{today}")
+today_output.mkdir(parents=True, exist_ok=True)
+
+# 企画本文読み込み
 plan_text = plan_path.read_text(encoding="utf-8")
 
-# ===== プロンプト定義（演出方針も含む） =====
+# プロンプト定義（素材情報・演出方針含む）
 prompt = f"""
 以下はノベルゲームの企画書です。この内容から以下の構造を含むJSONを出力してください：
 
@@ -54,24 +64,20 @@ prompt = f"""
 ---
 """
 
-# ===== OpenAI 呼び出し =====
+# OpenAI API呼び出し
 res = client.chat.completions.create(
     model="gpt-4-turbo",
     messages=[
-        {
-            "role": "system",
-            "content": "あなたはプロのゲームディレクターです。JSON構造でノベルゲームの章構成と演出方針を出力してください。"
-        },
+        {"role": "system", "content": "あなたはプロのゲームディレクターです。JSON構造でノベルゲームの章構成と演出方針を出力してください。"},
         {"role": "user", "content": prompt}
     ],
     temperature=0.6
 )
 
-# ===== JSON部分を抽出（```json ～ ``` 対応） =====
-raw_content = res.choices[0].message.content.strip()
-match = re.search(r"```json\s*(\{.*\})\s*```", raw_content, re.DOTALL)
-structured_json = match.group(1) if match else raw_content
+# JSON部分抽出
+data = res.choices[0].message.content.strip()
+# 必要に応じて ```json``` タグ除去などの整形を行う
 
-# ===== 保存 =====
-(output_path / "chapter_meta.json").write_text(structured_json, encoding="utf-8")
-print(f"✅ chapter_meta.json を保存しました → {output_path/'chapter_meta.json'}")
+# 保存
+today_output.joinpath("chapter_meta.json").write_text(data, encoding="utf-8")
+print(f"✅ chapter_meta.json を保存しました → {today_output/'chapter_meta.json'}")
