@@ -2,27 +2,28 @@
 
 import os
 import json
+import re
 import requests
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from openai import OpenAI
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-today = datetime.today().strftime("%Y-%m-%d")
-meta_path = Path(f"output/{today}/chapter_meta.json")
-project_dir = Path(f"output/{today}/tyrano/data")
 
-bg_dir = project_dir / "bgimage"
-fg_dir = project_dir / "fgimage"
-bgm_dir = project_dir / "bgm"
-voice_dir = project_dir / "voice"
+def sanitize(name: str) -> str:
+    """
+    ファイルシステム上で安全な文字列に変換
+    英数字・アンダースコア・ハイフン以外をアンダースコアに置換する
+    """
+    return re.sub(r'[^0-9A-Za-z_-]', '_', name)
 
-for d in [bg_dir, fg_dir, bgm_dir, voice_dir]:
-    d.mkdir(parents=True, exist_ok=True)
-
-# ========= ヘルパー関数 ============
 
 def generate_dalle_image(prompt: str, output_path: Path):
+    """
+    DALL·E API で背景画像を生成し保存
+    失敗時は placeholder を書き込む
+    """
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     try:
         response = client.images.generate(
             model="dall-e-3",
@@ -30,62 +31,90 @@ def generate_dalle_image(prompt: str, output_path: Path):
             n=1,
             size="1024x1024"
         )
-        img_url = response.data[0].url
-        img_data = requests.get(img_url).content
+        url = response.data[0].url
+        img_data = requests.get(url).content
         output_path.write_bytes(img_data)
-        print(f"🖼 背景生成: {output_path.name}")
+        print(f"🖼️ Generated background: {output_path.name}")
     except Exception as e:
-        print(f"⚠ 背景生成失敗: {output_path.name} - {e}")
-        output_path.write_text("dummy", encoding="utf-8")
+        print(f"⚠️ Background generation failed: {output_path.name} - {e}")
+        output_path.write_text("[BG] placeholder", encoding="utf-8")
 
-def create_placeholder(path: Path, kind: str):
-    if not path.exists():
-        path.write_text(f"[{kind}] placeholder", encoding="utf-8")
 
-# ============ データ読み込み ============
+def main():
+    # 日付(JST)設定
+    tz = ZoneInfo("Asia/Tokyo")
+    today = datetime.now(tz).strftime("%Y-%m-%d")
+    output_dir = Path("output") / today
 
-if not meta_path.exists():
-    raise FileNotFoundError(f"章メタ情報が見つかりません: {meta_path}")
+    # メタ読み込み
+    meta_path = output_dir / "chapter_meta.json"
+    if not meta_path.exists():
+        raise FileNotFoundError(f"Meta file not found: {meta_path}")
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    chapters = meta.get("chapters", [])
+    character_map = meta.get("character_map", {})
 
-meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    # ディレクトリ設定
+    data_dir = output_dir / "data"
+    bg_dir = data_dir / "bgimage"
+    fg_root = data_dir / "fgimage" / "chara"
+    bgm_dir = data_dir / "bgm"
+    voice_dir = data_dir / "voice"
+    for d in (bg_dir, fg_root, bgm_dir, voice_dir):
+        d.mkdir(parents=True, exist_ok=True)
 
-# ============ 各種素材生成 ============
+    # 資産リストの抽出
+    all_backgrounds = {bg for ch in chapters for bg in ch.get("backgrounds", [])}
+    all_bgms = {ch.get("bgm") for ch in chapters if ch.get("bgm")}
+    raw_chars = {raw for ch in chapters for raw in ch.get("characters", [])}
+    voice_entries = []
+    for ch in chapters:
+        for line in ch.get("lines", []):
+            vfile = line.get("voice_file")
+            text = line.get("text", "")
+            safe_id = line.get("safe_character") or sanitize(line.get("character", ""))
+            if vfile:
+                voice_entries.append({
+                    "safe_id": safe_id,
+                    "voice_file": vfile,
+                    "text": text
+                })
 
-all_bgs = set()
-all_bgms = set()
-all_chars = set()
-all_voices = []
+    # 背景画像生成
+    for bg in all_backgrounds:
+        out_path = bg_dir / bg
+        if not out_path.exists():
+            prompt = f"{Path(bg).stem.replace('_',' ')}, background for visual novel, no people"
+            generate_dalle_image(prompt, out_path)
 
-for ch in meta:
-    all_bgs.update(ch.get("backgrounds", []))
-    all_bgms.update(ch.get("bgm", []))
-    all_chars.update(ch.get("characters", []))
-    all_voices.extend(ch.get("lines", []))
+    # BGM プレースホルダー
+    for bgm in all_bgms:
+        safe_name = sanitize(bgm)
+        out_path = bgm_dir / safe_name
+        if not out_path.exists():
+            out_path.write_text("[BGM] placeholder", encoding="utf-8")
+            print(f"🎵 Created dummy BGM: {safe_name}")
 
-# 背景画像（DALL·E）
-for bg_name in all_bgs:
-    output_path = bg_dir / bg_name
-    prompt = f"背景画像: {bg_name.replace('bg_', '').replace('.jpg','').replace('_',' ')}、アニメ風、明るい色調"
-    generate_dalle_image(prompt, output_path)
+    # キャラ立ち絵プレースホルダー
+    for raw in raw_chars:
+        safe = character_map.get(raw, sanitize(raw))
+        char_dir = fg_root / safe
+        char_dir.mkdir(parents=True, exist_ok=True)
+        for expr in ("normal", "angry", "smile", "sad"):
+            out_path = char_dir / f"{expr}.png"
+            if not out_path.exists():
+                out_path.write_text("[FG] placeholder", encoding="utf-8")
+                print(f"🖼️ Created placeholder FG: {safe}/{expr}.png")
 
-# BGM（仮置き）
-for bgm in all_bgms:
-    create_placeholder(bgm_dir / bgm, "BGM")
+    # ボイスプレースホルダー
+    for entry in voice_entries:
+        out_path = voice_dir / entry["voice_file"]
+        if not out_path.exists():
+            out_path.write_text(entry["text"], encoding="utf-8")
+            print(f"🎤 Created dummy voice: {entry['voice_file']}")
 
-# 立ち絵（仮配置: 感情4パターン）
-for char in all_chars:
-    for emotion in ["normal", "angry", "smile", "sad"]:
-        fname = f"{char}_{emotion}.png"
-        create_placeholder(fg_dir / fname, "FG")
+    print(f"✅ Asset generation complete: backgrounds={len(all_backgrounds)}, bgms={len(all_bgms)}, chars={len(raw_chars)}, voices={len(voice_entries)}")
 
-# ボイス（仮：テキストを保存するだけ。TTS自動化は別スクリプトへ）
-for line in all_voices:
-    vfile = line["voice_file"]
-    text = line["text"]
-    vpath = voice_dir / vfile
-    if not vpath.exists():
-        vpath.write_text(text, encoding="utf-8")
 
-# ============ 完了 ============
-
-print(f"✅ 素材生成完了：背景{len(all_bgs)}件 / キャラ{len(all_chars)} / BGM{len(all_bgms)} / ボイス{len(all_voices)}件")
+if __name__ == "__main__":
+    main()
