@@ -57,15 +57,19 @@ system_dir.mkdir(parents=True, exist_ok=True)
 # ============ テンプレートコピー ============
 template_base = Path("templates/tyrano")
 if template_base.exists():
-    # エンジン本体コピー
+    # エンジン本体コピー (tyrano/tyrano → output/.../tyrano)
     src_engine = template_base / "tyrano"
     if src_engine.exists():
         shutil.copytree(src_engine, tyra_dir, dirs_exist_ok=True)
-    # systemファイルコピー
+    # systemフォルダコピー
     src_system = template_base / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
-    # その他のデータ資産（images, bgm, video, sound など）
+    # root-level index.html コピー
+    src_index = template_base / "index.html"
+    if src_index.exists():
+        shutil.copy(src_index, tyra_dir / "index.html")
+    # その他のデータ資産 (bgm, image, video, sound など)
     src_data = template_base / "data"
     for sub in src_data.iterdir():
         if sub.is_dir() and sub.name not in ["scenario", "system"]:
