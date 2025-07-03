@@ -1,74 +1,81 @@
-以下は、指定された制作方針に基づいて、TyranoScriptでの「帰り道の和解」という章のスクリプト例です。このスクリプトは、キャラクター間の感情の変化、分岐、再接続が含まれており、視覚的および聴覚的な演出も考慮されています。
+以下は、章「帰り道」のためのTyranoScriptの基本的な構造とサンプルスクリプトです。このスクリプトは、プレイヤーの選択によって異なる分岐と感情の変化を体験できるように設計されています。
 
-```ks
-; 帰り道の和解
-[title name="帰り道の和解"]
+```tyranoscript
+;----------------------------------------
+; 帰り道
+;----------------------------------------
 
-; バックグランド設定
-[bg storage="road_evening.png" time=1000]
+[title name="帰り道"]
 
-; BGM開始
-[playbgm storage="evening_walk.mp3" loop=true]
+; 背景設定
+[bg storage="evening_road.jpg" time=1000]
+[playbgm storage="evening_walk.mp3"]
 
-; 登場人物を表示
-[char name="hero" storage="hero_normal.png" x=300 y=300 visible=true]
-[char name="heroine" storage="heroine_sad.png" x=600 y=300 visible=true]
+; キャラクター表示
+[char name="yuu" storage="yuu_normal.png" time=600 position=left]
+[char name="mai" storage="mai_happy.png" time=600 position=right]
 
-; シーン開始
+; 会話開始
 [cm]
-[voice storage="voice_hero_neutral_001.mp3"]
-[hero pos="left" face="hero_normal.png" voice="voice_hero_neutral_001.mp3"]
-「なんだか、今日は変だよね。普段と違う気がする。」
+yuu :"今日は楽しかったね。"
+mai :"うん、すごく楽しかった！また行こうね。"
 
-[voice storage="voice_heroine_sad_001.mp3"]
-[heroine pos="right" face="heroine_sad.png" voice="voice_heroine_sad_001.mp3"]
-「うん、ごめんね。ちょっと考え事をしてたの。」
-
-; 分岐1: プレイヤーの選択
+; 選択肢設定
 [s]
-[select name="choice1"]
-「何を考えてたの？」
-[call storage="scenario_ponder.ks"]
-['ただ、そばにいるよ']
-[call storage="scenario_comfort.ks"]
-[endselect]
+[select link="good_feelings" target="good_feelings" text="「また行こう」"]
+[select link="ask_deeper" target="ask_deeper" text="「もっと本音を聞かせて」"]
+[e]
 
-; 選択肢によって変わるシーンへ移動
-[goto target=*choice1_result]
-
-*choice1_result
-; scenario_ponder.ks または scenario_comfort.ks から戻ってくる
-
-; 感情の変化を反映した状態で再開
+; 分岐1: 好感度アップ
+*good_feelings
+[char name="yuu" storage="yuu_smile.png"]
+[char name="mai" storage="mai_excited.png"]
+yuu :"もちろんだよ。次はどこに行きたい？"
+mai :"海が見えるところがいいな。"
 [cm]
-[heroine face="heroine_happy.png" pos="right"]
-[voice storage="voice_heroine_happy_001.mp3"]
-「ありがとう、そう言ってくれると嬉しいな。」
+[link target="continue_talk" text="話を続ける"]
 
-[hero face="hero_smile.png" pos="left"]
-[voice storage="voice_hero_neutral_002.mp3"]
-「いつもの君が戻ってきて良かったよ。」
-
-; 最後のBGMとバックグラウンド変更
-[fadeoutbgm time=2000]
-[bg storage="cafe_night.png" time=1000]
-[playbgm storage="cafe_night.mp3" loop=true]
-
-; エピローグ
-[char name="narrator"]
+; 分岐2: 更に深い話
+*ask_deeper
+[char name="yuu" storage="yuu_serious.png"]
+[char name="mai" storage="mai_serious.png"]
+yuu :"実は、もっと深い話がしたいんだ。"
+mai :"ええ、私も同じことを考えていたの。"
 [cm]
-[voice storage="voice_narration_001.mp3"]
-「その夜、二人は久しぶりに心を通わせ、和やかな時間を過ごした。これにより、彼らの関係はさらに深まることとなる。」
+[link target="deep_talk" text="深い話をする"]
 
-; シナリオエンド
+; 深い話をする
+*deep_talk
+[char name="mai" storage="mai_sad.png"]
+mai :"実は最近、仕事で悩んでいるの。"
+[char name="yuu" storage="yuu_concerned.png"]
+yuu :"大変だね。何か手伝えることがあれば言ってね。"
+[cm]
+[link target="continue_talk" text="話を続ける"]
+
+; 話を続ける
+*continue_talk
+[char name="yuu" storage="yuu_happy.png"]
+[char name="mai" storage="mai_smile.png"]
+yuu :"今日の話、とても心に残るよ。"
+mai :"私もよ。ありがとう。"
+[cm]
+[end]
+
+; 音楽と背景の変更
+[stopbgm]
+[changescene storage="home_night.ks"]
+
+; エンドマーク
 [end]
 ```
 
-このスクリプトは以下のポイントをカバーしています：
-1. **感情表現**：キャラクターの感情がセリフと顔の表情で表現されています。
-2. **分岐と再接続**：プレイヤーの選択による分岐が含まれ、選択に応じた異なるシナリオへのリンクが設定されています。
-3. **音声と音楽**：各セリフにはボイスファイルが設定され、シーンに合わせたBGMが流れます。
-4. **視覚的・聴覚的な演出**：背景やBGMの切り替えが含まれ、シーンの変化を強調します。
+このスクリプトは以下の内容を含んでいます：
+- タイトルの設定
+- 背景とBGMの設定
+- キャラクターの表示と感情の表現
+- プレイヤーの選択による分岐
+- 音楽と背景の変更
 
-これにより、プレイヤーは感情の移り変わりと共に物語を楽しむことができます。
+必要に応じて、更に詳細な設定や調整を加えてください。
 [return]

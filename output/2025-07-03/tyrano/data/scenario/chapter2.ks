@@ -1,72 +1,66 @@
-以下は、タイトルが「カフェでの誤解」とされたノベルゲームの章におけるTyranoScriptフォーマットのシナリオファイルです。各要素は上述の制作方針とフィードバックに基づいて設計されています。
+以下は、カフェでの対話をテーマにした短編ノベルゲームの一部分をTyranoScriptで記述した例です。このシナリオでは、主人公と女性キャラクターがカフェで誤解を解くという内容を展開しています。
 
-```ks
-; カフェでの誤解 - scenario_cafe.ks
+```tyranoscript
+[title name="カフェでの対話"]
 
-[title name="カフェでの誤解"]
+; シナリオの開始
+[start]
+    [bg storage="cafe.jpg" time=1000]
+    [playbgm storage="cafe_bgm.mp3"]
+    [chara_show name="主人公" storage="protagonist_normal.png" ]
+    [chara_show name="女性" storage="woman_smile.png" ]
+    [cm]
 
-; 背景とBGMの設定
-[bg storage="cafe_background.jpg" time=1000]
-[playbgm storage="daytime_cafe.mp3"]
+    ; カフェの背景設定
+    [layopt layer=message0 visible=true]
+    [ptext page="fore" text="場所はとあるおしゃれなカフェ。午後の穏やかな日差しの中、主人公と女性が向かい合って座っている。"]
 
-; シーン開始
-[chara show="heroine_normal.png" name="ヒロイン" pos="right"]
-[voice storage="voice_hiroine1.mp3"]
-ヒロイン「なんだか、今日は妙に静かね。何か隠してるの？」
+    ; 主人公のセリフ
+    [chara_mod name="主人公" face="protagonist_serious.png"]
+    [ptext page="fore" text="「実は、前に言ったことについて謝りたいんだ。誤解を招いてしまって...」"]
+    [voice storage="apology_001.mp3"]
 
-[chara show="protagonist_smile.png" name="主人公" pos="left"]
-[voice storage="voice_protagonist1.mp3"]
-主人公「何も隠してないよ。ただ、ゆっくり話ができたらと思って…」
+    ; 女性のリアクション
+    [chara_mod name="女性" face="woman_surprised.png"]
+    [ptext page="fore" text="「え、それって...もしかして...」"]
+    [voice storage="question_001.mp3"]
 
-; 選択肢
-[s]
-[select color="#FFA07A" link="misunderstanding" text="正直に誤解を説明する"]
-[select color="#FFA07A" link="divert" text="話題をそらしてみる"]
+    ; 分岐選択肢
+    [select]
+        "すべて話す" goto="explain_all"
+        "少しだけ話す" goto="explain_part"
+    [endselect]
 
-; ラベル：誤解を説明する
-*misunderstanding
-[chara show="protagonist_serious.png"]
-[voice storage="voice_protagonist2.mp3"]
-主人公「実は、あの日のことは全て誤解だったんだ。僕が言ったのは…」
+[explain_all]
+    [chara_mod name="主人公" face="protagonist_serious.png"]
+    [ptext page="fore" text="「実はその時、大きな誤解があったんだ。こういうことが事実だったんだよ。」"]
+    [voice storage="explanation_002.mp3"]
 
-[chara show="heroine_surprised.png"]
-[voice storage="voice_hiroine2.mp3"]
-ヒロイン「え、本当に？もしかして、ずっと勘違いしてたの？」
+    [chara_mod name="女性" face="woman_relief.png"]
+    [ptext page="fore" text="「そうだったのね、ありがとう。全て話してくれて。」"]
+    [voice storage="relief_002.mp3"]
+    [jump target="after_explanation"]
 
-[bg storage="cafe_evening.jpg" time=1500]
-[playbgm storage="relief.mp3"]
-[chara show="heroine_relieved.png"]
-ヒロイン「それなら、もう何も心配ないわ。ありがとう、話してくれて。」
+[explain_part]
+    [chara_mod name="主人公" face="protagonist_serious.png"]
+    [ptext page="fore" text="「まぁ、とにかく誤解だったんだ。詳しくはまた今度...」"]
+    [voice storage="vague_001.mp3"]
 
-; シーン終了へ向けて
-[chara show="protagonist_relaxed.png"]
-[voice storage="voice_protagonist3.mp3"]
-主人公「よかった…これでまた前みたいに楽しく過ごせるね。」
+    [chara_mod name="女性" face="woman_pensive.png"]
+    [ptext page="fore" text="「そう...また今度ね。」"]
+    [voice storage="acceptance_001.mp3"]
+    [jump target="after_explanation"]
 
-[endlink]
+[after_explanation]
+    [bg storage="evening_cafe.jpg" time=1000]
+    [playbgm storage="evening_bgm.mp3"]
+    [chara_mod name="主人公" face="protagonist_smile.png"]
+    [chara_mod name="女性" face="woman_smile.png"]
+    [ptext page="fore" text="空気が和やかになり、二人は夕暮れ時まで話し続けた。"]
+    [voice storage="happy_003.mp3"]
 
-; ラベル：話題をそらす
-*divert
-[chara show="protagonist_nervous.png"]
-[voice storage="voice_protagonist4.mp3"]
-主人公「そうだ、このカフェの新しいスイーツ試してみない？」
-
-[chara show="heroine_puzzled.png"]
-[voice storage="voice_hiroine3.mp3"]
-ヒロイン「うーん、そうね。でも、何かごまかしてるみたい…」
-
-; シーン継続
-[s]
-[chara show="protagonist_serious.png"]
-[voice storage="voice_protagonist2.mp3"]
-主人公「ごめん、ちゃんと話すね。実は…」
-
-[bg storage="cafe_evening.jpg" time=1500]
-[playbgm storage="serious_talk.mp3"]
-[chara show="heroine_listening.png"]
-ヒロイン「ちゃんと話してくれるの？じゃあ、聞くわ。」
-
-[endlink]
+    [return]
 ```
-このTyranoScriptのシナリオでは、カフェでの誤解をテーマに、主人公とヒロインが対話を通じて誤解を解消する過程を描いています。バックグラウンド画像やBGMの切り替え、キャラクター表情と声の変化を利用し、感情の変動を視覚的および聴覚的に表現しています。選択肢によって異なる展開が生じ、プレイヤーの選択によって物語が変化することを示しています。
+
+この例では、背景画像の変化、キャラクター画像の変化、BGMの再生、ボイスの再生、選択肢による分岐など、TyranoScriptを使用して多様な演出を行っています。各セリフや行動がキャラクターの性格や感情を表現しており、プレイヤーが物語に没入できるよう工夫されています。
 [return]
