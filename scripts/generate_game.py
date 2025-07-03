@@ -55,28 +55,28 @@ scenario_dir.mkdir(parents=True, exist_ok=True)
 system_dir.mkdir(parents=True, exist_ok=True)
 
 # ============ テンプレートコピー ============
-template_base = Path("templates/tyrano")
+template_base = Path("engine_template")
 if template_base.exists():
-    # エンジン本体コピー (tyrano/tyrano → output/.../tyrano)
+    # TyranoScriptエンジン本体 (tyrano/) のコピー
     src_engine = template_base / "tyrano"
     if src_engine.exists():
         shutil.copytree(src_engine, tyra_dir, dirs_exist_ok=True)
     # systemフォルダコピー
-    src_system = template_base / "data" / "system"
+    src_system = src_engine / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
-    # root-level index.html コピー
-    src_index = template_base / "index.html"
+    # index.htmlコピー
+    src_index = src_engine / "index.html"
     if src_index.exists():
         shutil.copy(src_index, tyra_dir / "index.html")
-    # その他のデータ資産 (bgm, image, video, sound など)
-    src_data = template_base / "data"
+    # その他のデータ資産 (bgm, fgimage, bgimage, video, sound など)
+    src_data = src_engine / "data"
     for sub in src_data.iterdir():
         if sub.is_dir() and sub.name not in ["scenario", "system"]:
             dst = tyra_dir / "data" / sub.name
             shutil.copytree(sub, dst, dirs_exist_ok=True)
 
-# ============ スクリプト生成関数 ====================
+# ============ スクリプト生成関数 ============
 def generate_ks_script(chapter):
     prompt = f"""
 {policy_text}
@@ -87,8 +87,8 @@ def generate_ks_script(chapter):
     res = client.chat.completions.create(
         model="gpt-4-turbo",
         messages=[
-            {"role":"system","content":"あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
-            {"role":"user","content":prompt}
+            {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
+            {"role": "user", "content": prompt}
         ],
         temperature=0.8
     )
@@ -164,7 +164,7 @@ plugin_kst = system_dir / "plugin.kst"
 plugin_kst.write_text("; プラグイン定義用ファイル（自動生成）\n", encoding="utf-8")
 
 # ============ 空ファイル補完 ============
-for fname in ["save.ks","load.ks","backlog.ks"]:
+for fname in ["save.ks", "load.ks", "backlog.ks"]:
     path = scenario_dir / fname
     if not path.exists():
         path.write_text("; 自動生成ダミー\n", encoding="utf-8")
