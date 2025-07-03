@@ -2,51 +2,81 @@
 
 import os
 import json
+import re
+import shutil
 from pathlib import Path
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from pydub.generators import Sine
 from pydub import AudioSegment
 
-# ============ 初期設定 ============
 
-today = datetime.today().strftime("%Y-%m-%d")
-meta_path = Path(f"output/{today}/chapter_meta.json")
-voice_dir = Path(f"output/{today}/tyrano/data/voice")
-voice_dir.mkdir(parents=True, exist_ok=True)
+def sanitize(name: str) -> str:
+    """
+    ファイル名として安全な文字列に変換
+    英数字・アンダースコア・ハイフン以外をアンダースコアに置換する
+    """
+    return re.sub(r'[^0-9A-Za-z_-]', '_', name)
 
-# ============ 音声生成関数 ============
 
-# ダミーのボイス生成（300msのBeep）
 def create_dummy_voice(path: Path):
-    tone = Sine(880).to_audio_segment(duration=300)  # 880Hz, 300ms
+    """
+    ダミーのボイス生成（300msのビープ音）
+    将来的にTTS連携を実装可能
+    """
+    tone = Sine(880).to_audio_segment(duration=300)
     tone.export(path, format="mp3")
-    print(f"🎤 ダミー生成: {path.name}")
+    print(f"🎤 Created dummy voice: {path.name}")
 
-# 将来対応：TTS音声合成（例：OpenAI, VoiceVox 連携）
-def generate_tts_voice(text: str, path: Path, speaker="default"):
-    # ここにTTS連携処理を組み込む予定（現在は仮）
+
+def generate_tts_voice(text: str, path: Path, speaker: str = "default"):
+    """
+    TTS音声合成フック
+    現在はダミー実装、後でTTS API連携を追加
+    """
+    # TODO: integrate real TTS service (e.g., OpenAI, VoiceVox)
     create_dummy_voice(path)
 
-# ============ メタファイル確認 ============
 
-if not meta_path.exists():
-    raise FileNotFoundError(f"メタファイルが見つかりません: {meta_path}")
+def main():
+    # APIキー／Tゾーン準備
+    tz = ZoneInfo("Asia/Tokyo")
+    today = datetime.now(tz).strftime("%Y-%m-%d")
+    output_dir = Path("output") / today
 
-meta = json.loads(meta_path.read_text(encoding="utf-8"))
+    # メタJSON読み込み
+    meta_path = output_dir / "chapter_meta.json"
+    if not meta_path.exists():
+        raise FileNotFoundError(f"Meta file not found: {meta_path}")
+    meta = json.loads(meta_path.read_text(encoding="utf-8"))
 
-# ============ ボイス生成 ============
+    # 出力先ディレクトリ
+    voice_dir = output_dir / "data" / "voice"
+    voice_dir.mkdir(parents=True, exist_ok=True)
 
-generated = set()
+    # キャラ safe_id マッピング
+    character_map = meta.get("character_map", {})
 
-# 修正点：meta["chapters"] をループ
-for ch in meta.get("chapters", []):
-    for line in ch.get("lines", []):
-        vfile = line["voice_file"]
-        text = line["text"]
-        out_path = voice_dir / vfile
+    generated = set()
+    # 各章のセリフごとに音声ファイル生成
+    for ch in meta.get("chapters", []):
+        for line in ch.get("lines", []):
+            raw_id = line.get("character")
+            safe_id = character_map.get(raw_id, sanitize(raw_id)) if raw_id else sanitize("unknown")
+            vfile = line.get("voice_file")
+            if not vfile:
+                continue
+            # 安全なファイル名
+            safe_vfile = sanitize(vfile)
+            out_path = voice_dir / safe_vfile
 
-        if not out_path.exists() and vfile not in generated:
-            generate_tts_voice(text, out_path)
-            generated.add(vfile)
+            if safe_vfile not in generated:
+                text = line.get("text", "")
+                generate_tts_voice(text, out_path, speaker=safe_id)
+                generated.add(safe_vfile)
 
-print(f"✅ ボイスファイル生成完了（{len(generated)} ファイル）")
+    print(f"✅ Voice generation complete: {len(generated)} files")
+
+
+if __name__ == "__main__":
+    main()
