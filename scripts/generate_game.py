@@ -24,7 +24,7 @@ subdirs.sort(key=lambda p: p.name)
 latest_dir = subdirs[-1]
 meta_path = latest_dir / "chapter_meta.json"
 
-# chapter_meta.json がないか空・不正な場合、自動で generate_structure.py を実行
+# chapter_meta.json がないか不正な場合、自動で generate_structure.py を実行
 if not meta_path.exists():
     print(f"⚠ メタファイルが存在しません: {meta_path} → generate_structure.py を実行します")
     subprocess.run(["python", "scripts/generate_structure.py"], check=True)
@@ -57,24 +57,14 @@ system_dir.mkdir(parents=True, exist_ok=True)
 # ============ テンプレートコピー ============
 template_base = Path("engine_template")
 if template_base.exists():
-    # TyranoScriptエンジン本体 (tyrano/) のコピー
-    src_engine = template_base / "tyrano"
-    if src_engine.exists():
-        shutil.copytree(src_engine, tyra_dir, dirs_exist_ok=True)
-    # systemフォルダコピー
-    src_system = src_engine / "data" / "system"
+    # engine_template 自体が TyranoScript の root なので直接コピー
+    shutil.copytree(template_base, tyra_dir, dirs_exist_ok=True)
+    # system フォルダだけ別に確保
+    src_system = template_base / "data" / "system"
     if src_system.exists():
         shutil.copytree(src_system, system_dir, dirs_exist_ok=True)
-    # index.htmlコピー
-    src_index = src_engine / "index.html"
-    if src_index.exists():
-        shutil.copy(src_index, tyra_dir / "index.html")
-    # その他のデータ資産 (bgm, fgimage, bgimage, video, sound など)
-    src_data = src_engine / "data"
-    for sub in src_data.iterdir():
-        if sub.is_dir() and sub.name not in ["scenario", "system"]:
-            dst = tyra_dir / "data" / sub.name
-            shutil.copytree(sub, dst, dirs_exist_ok=True)
+    # index.html は既にコピー済み above
+    # その他の data 以下資産は一括コピー済み above
 
 # ============ スクリプト生成関数 ============
 def generate_ks_script(chapter):
@@ -87,8 +77,8 @@ def generate_ks_script(chapter):
     res = client.chat.completions.create(
         model="gpt-4-turbo",
         messages=[
-            {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
-            {"role": "user", "content": prompt}
+            {"role":"system","content":"あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
+            {"role":"user","content":prompt}
         ],
         temperature=0.8
     )
