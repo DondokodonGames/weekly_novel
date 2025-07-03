@@ -1,81 +1,75 @@
-以下は、章「帰り道」のためのTyranoScriptの基本的な構造とサンプルスクリプトです。このスクリプトは、プレイヤーの選択によって異なる分岐と感情の変化を体験できるように設計されています。
+以下は、帰り道の解決という章のTyranoScript形式のスクリプト例です。このスクリプトの中で、キャラクター描写、分岐と変化、音声・音楽設計、ダイアログ構成、シーン遷移、およびエンディング設計のルールに従って記述しました。
 
 ```tyranoscript
-;----------------------------------------
-; 帰り道
-;----------------------------------------
+[title name="帰り道の解決"]
 
-[title name="帰り道"]
+; プリロード画像と音声
+[preload storage="bg_street_evening.jpg" wait=false]
+[preload storage="bgm_calm.mp3" wait=false]
+[preload storage="char_miyu_normal.png" wait=false]
+[preload storage="char_miyu_smile.png" wait=false]
+[preload storage="char_miyu_sad.png" wait=false]
+[preload storage="voice_miyu_001.mp3" wait=false]
 
 ; 背景設定
-[bg storage="evening_road.jpg" time=1000]
-[playbgm storage="evening_walk.mp3"]
+[bg storage="bg_street_evening.jpg" time=1500]
+
+; BGM再生
+[playbgm storage="bgm_calm.mp3"]
 
 ; キャラクター表示
-[char name="yuu" storage="yuu_normal.png" time=600 position=left]
-[char name="mai" storage="mai_happy.png" time=600 position=right]
+[charshow name="miyu" storage="char_miyu_normal.png" time=1000]
 
-; 会話開始
-[cm]
-yuu :"今日は楽しかったね。"
-mai :"うん、すごく楽しかった！また行こうね。"
+; 基本セリフ
+[ptext ]
+彼女と並んで歩きながら、少し沈んだ空気を感じ取る。
+[wt]
 
-; 選択肢設定
-[s]
-[select link="good_feelings" target="good_feelings" text="「また行こう」"]
-[select link="ask_deeper" target="ask_deeper" text="「もっと本音を聞かせて」"]
-[e]
+[charshow name="miyu" storage="char_miyu_sad.png" time=500]
+[m "miyu" voice="voice_miyu_001.mp3"]
+「なんだか、すごく悩んでいるみたい…。」
 
-; 分岐1: 好感度アップ
-*good_feelings
-[char name="yuu" storage="yuu_smile.png"]
-[char name="mai" storage="mai_excited.png"]
-yuu :"もちろんだよ。次はどこに行きたい？"
-mai :"海が見えるところがいいな。"
-[cm]
-[link target="continue_talk" text="話を続ける"]
+; 選択肢
+[selselect]
+選択肢１:「何かあったの？」[jump target="Choice1"]
+選択肢２:そのまま黙ってそばにいる[jump target="Choice2"]
+[eselselect]
 
-; 分岐2: 更に深い話
-*ask_deeper
-[char name="yuu" storage="yuu_serious.png"]
-[char name="mai" storage="mai_serious.png"]
-yuu :"実は、もっと深い話がしたいんだ。"
-mai :"ええ、私も同じことを考えていたの。"
-[cm]
-[link target="deep_talk" text="深い話をする"]
+; 選択肢１: 心配する
+*Choice1
+[charshow name="miyu" storage="char_miyu_normal.png" time=500]
+[m "miyu"]
+「うん、ちょっとね…。」
 
-; 深い話をする
-*deep_talk
-[char name="mai" storage="mai_sad.png"]
-mai :"実は最近、仕事で悩んでいるの。"
-[char name="yuu" storage="yuu_concerned.png"]
-yuu :"大変だね。何か手伝えることがあれば言ってね。"
-[cm]
-[link target="continue_talk" text="話を続ける"]
+; 会話続き
+[ptext ]
+彼女は少し話し始め、気持ちが楽になったようだ。
+[wt]
 
-; 話を続ける
-*continue_talk
-[char name="yuu" storage="yuu_happy.png"]
-[char name="mai" storage="mai_smile.png"]
-yuu :"今日の話、とても心に残るよ。"
-mai :"私もよ。ありがとう。"
-[cm]
-[end]
+[jump target="CommonEnd"]
 
-; 音楽と背景の変更
-[stopbgm]
-[changescene storage="home_night.ks"]
+; 選択肢２: 黙ってそばにいる
+*Choice2
+[ptext ]
+ただ黙ってそばにいる。時にはそれが一番の支えになる。
+[wt]
 
-; エンドマーク
+[jump target="CommonEnd"]
+
+; 共通の終わり
+*CommonEnd
+[charshow name="miyu" storage="char_miyu_smile.png" time=500]
+[ptext ]
+彼女の表情が明るくなり、手を握ってきた。「ありがとう」と小さな声でつぶやく。
+[wt]
+
+; BGMとキャラクターフェードアウト
+[fadeoutbgm time=2000]
+[charfadeout name="miyu" time=2000]
+
+; シナリオ終了
 [end]
 ```
 
-このスクリプトは以下の内容を含んでいます：
-- タイトルの設定
-- 背景とBGMの設定
-- キャラクターの表示と感情の表現
-- プレイヤーの選択による分岐
-- 音楽と背景の変更
-
-必要に応じて、更に詳細な設定や調整を加えてください。
+このスクリプトは、TyranoScriptでの基本的なコマンドを使用して、キャラクターの心情変化、選択肢の提供、BGMの採用、そしてシーンの視覚的トランジションを行っています。キャラクターの表情変更や音声ファイルの割り当ても適切に行われています。これにより、プレイヤーはキャラクターとの感情的なつながりを感じることができます。
 [return]

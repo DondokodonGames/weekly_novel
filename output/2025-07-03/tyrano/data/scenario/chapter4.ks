@@ -1,63 +1,56 @@
-以下は、「最後の会話」という章のTyranoScriptで構築されたノベルゲームスクリプトの一例です。このスクリプトは、上記の方針とフィードバックを基に作成されています。
+以下は、タイトル「最後の会話」という章について、TyranoScriptの形式に基づいて生成されたシナリオスクリプトです。この章では、キャラクターが室内で重要な対話を交わし、感情の変化を体験する場面が描かれます。
 
-```tyranoscript
+```ks
 [title name="最後の会話"]
 
-; 背景音楽と背景画像の設定
-[bg storage="room_background.jpg" time=1000]
-[playbgm storage="emotional_scene.mp3" loop=true]
+; 背景設定
+[bg storage="room.jpg" time=1000]
+[playbgm storage="calm_theme.mp3"]
 
-; キャラクターの登場
-[char name="女性" storage="woman_normal.png" jname="美月" x=300 y=150]
-[char name="主人公" storage="hero_normal.png" jname="陽介" x=500 y=150]
+; キャラクター登場
+[chara_show name="彼女" storage="heroine_normal.png" time=1000]
 
-; 最初のセリフ
-[voice storage="start_conversation.mp3"]
+; オープニングのテキスト
 [cm]
-美月「ここまで来るの、本当に長かったね…」
+[ct]
+「ずっと、言えなかったことがあるんだ。」[p]
+彼女は少し視線を逸らしながら、静かに語り始めた。[p]
 
-; 主人公のセリフ
-[voice storage="hero_response.mp3"]
-[cm]
-陽介「うん、だけど、君と過ごせた時間は僕にとって大切なものだったよ。」
+; 彼女のセリフ、感情が徐々に変わる
+[chara_mod name="彼女" storage="heroine_sad.png" time=500]
+「いつも支えてくれて、ありがとう。実は、それがすごく、すごく嬉しかった。」[p]
+[voice storage="thankful_001.mp3"]
 
-; 感情が変化するシーン
-[char name="女性" storage="woman_tearful.png" jname="美月" x=300 y=150]
-[voice storage="woman_crying.mp3"]
-[cm]
-美月「ありがとう…それを聞けて、すごく嬉しい。」
+[chara_mod name="彼女" storage="heroine_smile.png" time=500]
+「でも、私も強くなりたい。」[p]
+[voice storage="determined_002.mp3"]
 
-; 選択肢設定
-[select name="選択肢1"]
-[choice storage="continue_support.ks" target="続けて支える"]「僕はこれからもずっと君のそばにいるよ」
-[choice storage="new_beginning.ks" target="新しい始まり"]「これから新しい始まりだね、一緒に頑張ろう」
-[endselect]
+; 選択肢
+[s]
+選択肢１：「いつでもそばにいるよ」
+[playse storage="positive_response.mp3"]
+[chara_mod name="彼女" storage="heroine_happy.png" time=500]
+「それを聞いて、心が軽くなったよ。」[p]
+[voice storage="happy_003.mp3"]
+[jump target="happy_ending.ks"]
 
-; キャラクターの表情変更と最後のセリフ
-[char name="女性" storage="woman_smiling.png" jname="美月" x=300 y=150]
-[voice storage="woman_final_smile.mp3"]
-[cm]
-美月「ねえ、陽介…ありがとう。私、幸せだよ。」
+選択肢２：「自分の力を信じて」
+[playse storage="supportive_response.mp3"]
+[chara_mod name="彼女" storage="heroine_determined.png" time=500]
+「ありがとう。自分でもやってみる。」[p]
+[voice storage="empowered_004.mp3"]
+[jump target="growth_ending.ks"]
 
-; シーンの終了
+; 章の終了
 [end]
-
-; BGMの停止
-[stopbgm]
-
-; エンディングに進む
-[call storage="ending.ks"]
-
 ```
 
-このスクリプトは、以下の要素を含んでいます：
-- タイトルと章の設定
-- 背景画像とBGMの設定
-- キャラクターの表示とジャンプ名
-- セリフと声の設定
-- 感情の変化に応じたキャラクター画像の変更
-- 選択肢の提供とそれに応じたシナリオ分岐
-- エンディングへの遷移
+### 解説：
+- **背景** (`bg`) と **BGM** (`playbgm`) はシーンの雰囲気を設定。
+- **キャラクター表示** (`chara_show`) と **モデル変更** (`chara_mod`) で感情の変化を視覚的に示す。
+- **ボイス** (`voice`) と音響効果 (`playse`) は、ダイアログの感情を強調。
+- **選択肢** (`s`) によりプレイヤーの選択がストーリーに影響を与える。
+- **ジャンプ** (`jump`) コマンドで異なるエンディングシナリオファイルへ移行。
 
-この例では、自動生成されたスクリプトがゲームの流れとプレイヤーの選択に応じて変化するドラマティックなシナリオを作成しています。
+このスクリプトは、提供された方針に沿って、感情の波、キャラクターの成長、そして複数のエンディングを体験できるように設計されています。
 [return]

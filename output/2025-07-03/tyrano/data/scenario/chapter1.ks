@@ -1,54 +1,62 @@
-以下は、TyranoScriptを用いた「駅での出会い」という章のスクリプト例です。このスクリプトは、プレイヤーが物語中のキャラクターと対話し、選択を行うことで物語が進行します。プレイヤーの選択によって物語の展開が変わるよう設計されています。
+以下は、章タイトル「駅での出会い」に基づいたTyranoScriptの一例です。このシナリオでは、駅で怒りっぽい女性が些細なことから怒りを爆発させる場面を描いています。
 
 ```tyranoscript
 [title name="駅での出会い"]
 
-;背景の設定
+; プロローグ
+[s]（この物語は架空の駅で繰り広げられます）
+
 [bg storage="station.jpg" time=1000]
+[playbgm storage="ambient_station.mp3" loop=true]
 
-;BGMの設定
-[playbgm storage="train_station.mp3" loop=true]
+[chara_show name="女性" storage="angry_woman.png" jname="怒り女性" x=300 y=400]
+[voice storage="voice1.mp3"]
 
-;キャラクター登場
-[char name="女性" storage="angry_woman.png" jname="怒りんぼうの女性" x=400 y=200]
+; 怒り女性の初登場
+l:「どうしてこんなことになるの！？」
 
-;ボイス付きセリフ
-[voice storage="voice001.mp3"]
-「また遅れてるの！？毎日毎日！」
+[chara_mod name="女性" face="angry" ]
+[voice storage="voice_angry1.mp3"]
+l:「すみません、私の足を踏んだのはあなたですよね？ちゃんと謝ってください！」
 
-[char name="プレイヤー" jname="あなた" x=600 y=200]
-「すみません、ちょっと待ってくださいね。」
+[chara_show name="プレイヤー" storage="default_player.png" jname="あなた" x=500 y=400]
+[voice storage="voice2.mp3"]
+l:「えっ、あ、ごめんなさい…気づきませんでした。」
 
-[voice storage="voice002.mp3"]
-「待ったって始まらないわよ！時間は金なの！」
+; 分岐1: 謝り方
+[select name="謝り方"]
+{"心から謝る":
+    [chara_mod name="プレイヤー" face="sorry"]
+    [voice storage="voice_apology1.mp3"]
+    l:「本当に申し訳ないです。気をつけます。」
+    [jump storage="chapter2.ks" target="*"]
+,
+"適当に謝る":
+    [chara_mod name="プレイヤー" face="uninterested"]
+    [voice storage="voice_apology2.mp3"]
+    l:「あ、うん。ごめんごめん。」
+    [jump storage="chapter2.ks" target="*"]
+}
 
-;選択肢の提示
-[s]
-[select link="calm" storage="calm.ks" target="*calm"]
-「落ち着いてください、きっと理由があるんですよ。」
-[endselect]
+; バックグラウンド音楽と背景画像の変更
+[bg storage="angry_scene.jpg" time=1000]
+[playbgm storage="tense_music.mp3" loop=true]
 
-[select link="agree" storage="agree.ks" target="*agree"]
-「確かに、いつも遅れていますよね。困ります。」
-[endselect]
+[chara_mod name="女性" face="very_angry"]
+[voice storage="voice_angry2.mp3"]
+l:「それだけ！？ ちゃんと気をつけてよね！」
 
-;分岐によるシナリオファイルの呼び出し
-[call storage="calm.ks" target="*calm"]
-
-[call storage="agree.ks" target="*agree"]
-
-;エンディングへの遷移
-[endscene]
-
+; エンディングへの遷移
+[jump storage="endings.ks" target="*"]
 ```
 
-### 説明:
-1. **背景**と**BGM**を設定し、プレイヤーを物語性のある環境へ誘導します。
-2. **キャラクター**が登場し、感情のある表情(`angry_woman.png`)とともにセリフを話します。
-3. **ボイス**を付けることで、キャラクターの感情をよりリアルに伝えます。
-4. **選択肢**を提供し、プレイヤーが物語の進行に影響を与える機会を作ります。
-5. 選択に応じて異なる**シナリオファイル**を呼び出し、物語の分岐を実現します。
-6. 最終的にエンディングシーンへ遷移します。
+このスクリプトは以下の要素を取り入れています：
 
-このスクリプトは、設定された品質基準に従い、プレイヤーが約15分間楽しめる内容となっています。
+- 各キャラクターの画像と声
+- 音楽と環境音
+- 背景画像の切り替え
+- プレイヤーの選択による分岐
+- キャラクターの感情の変化
+
+全体的に、プレイヤーが感情的な起伏を体験し、キャラクターの行動や選択がストーリーの進行に影響を与えることを重視しています。
 [return]

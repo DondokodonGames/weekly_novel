@@ -1,105 +1,81 @@
 {
   "art_style": "アニメ風",
-  "sound_mood": "クラシック",
+  "sound_mood": "ピアノ主体",
   "visual_theme": "夜の公園で話すような、静かでやさしい空気感",
   "chapters": [
     {
       "chapter_index": 1,
       "title": "駅での出会い",
-      "summary": "何にでも怒る女性が、駅での些細な出来事に怒りを爆発させる。",
+      "summary": "何にでも怒る女性が駅で些細なことから怒りを爆発させる。",
       "backgrounds": [
         "bg_station_day.jpg"
       ],
-      "bgm": "bgm_quiet_piano.mp3",
+      "bgm": "bgm_tension.mp3",
       "characters": [
-        "angry_f",
-        "protagonist_silhouette"
+        "angry_f"
       ],
       "lines": [
         {
           "character": "angry_f",
           "voice_file": "angry_f_001.mp3",
-          "text": "なんでこんなに混んでるの！？"
-        },
-        {
-          "character": "protagonist_silhouette",
-          "voice_file": "protagonist_001.mp3",
-          "text": "みんな同じように急いでるんだよ。"
+          "text": "なんでこんなに人が多いの！"
         }
       ]
     },
     {
       "chapter_index": 2,
       "title": "カフェでの対話",
-      "summary": "主人公はカフェで女性と対話し、誤解を解いていく。",
+      "summary": "主人公は彼女をカフェに誘い、優しく話を聞きながら誤解を解いていく。",
       "backgrounds": [
         "bg_cafe_day.jpg"
       ],
-      "bgm": "bgm_calm_piano.mp3",
+      "bgm": "bgm_calm.mp3",
       "characters": [
-        "angry_f",
-        "protagonist_silhouette"
+        "angry_f"
       ],
       "lines": [
         {
           "character": "angry_f",
           "voice_file": "angry_f_002.mp3",
-          "text": "こんなに待たされて...納得いかない！"
-        },
-        {
-          "character": "protagonist_silhouette",
-          "voice_file": "protagonist_002.mp3",
-          "text": "でも、おいしいコーヒーが飲めると思うと、少し待ってもいいかなって。"
+          "text": "私、本当はこんなに怒りたくないの..."
         }
       ]
     },
     {
       "chapter_index": 3,
-      "title": "帰り道",
-      "summary": "二人は帰り道を歩きながら、さらに深い話をする。",
+      "title": "帰り道の解決",
+      "summary": "歩道を歩きながら、さらに彼女の心の内を探り、共感を示す。",
       "backgrounds": [
         "bg_sidewalk_evening.jpg"
       ],
-      "bgm": "bgm_emotional_piano.mp3",
+      "bgm": "bgm_emotional.mp3",
       "characters": [
-        "angry_f",
-        "protagonist_silhouette"
+        "angry_f"
       ],
       "lines": [
         {
           "character": "angry_f",
           "voice_file": "angry_f_003.mp3",
-          "text": "あなたはいつもこんなに冷静なの？"
-        },
-        {
-          "character": "protagonist_silhouette",
-          "voice_file": "protagonist_003.mp3",
-          "text": "うん、でも君のおかげで色々考えることができたよ。"
+          "text": "こんなに理解してくれる人がいるなんて思わなかった..."
         }
       ]
     },
     {
       "chapter_index": 4,
       "title": "最後の会話",
-      "summary": "室内での最後の会話。女性は涙を流し、初めての笑顔を見せる。",
+      "summary": "室内での最終対話。彼女は心を開き、初めての笑顔を見せる。",
       "backgrounds": [
         "bg_room_night.jpg"
       ],
-      "bgm": "bgm_heartwarming_piano.mp3",
+      "bgm": "bgm_resolution.mp3",
       "characters": [
-        "angry_f",
-        "protagonist_silhouette"
+        "angry_f"
       ],
       "lines": [
         {
           "character": "angry_f",
           "voice_file": "angry_f_004.mp3",
-          "text": "こんなにも理解してくれる人がいるなんて...ありがとう。"
-        },
-        {
-          "character": "protagonist_silhouette",
-          "voice_file": "protagonist_004.mp3",
-          "text": "いつでも話を聞くよ。"
+          "text": "ありがとう、あなたと話せて良かった。"
         }
       ]
     }
