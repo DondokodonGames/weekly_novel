@@ -44,7 +44,7 @@ def main():
         d.mkdir(parents=True, exist_ok=True)
     print("✅ Initialized scenario/system directories")
 
-    # 3) メタJSONの読み込み
+    # 3) メタJSONの読み込み（character_map含む）
     subdirs = [d for d in output_base.iterdir() if d.is_dir() and d.name != today]
     subdirs.sort(key=lambda p: p.name)
     if not subdirs:
@@ -52,27 +52,39 @@ def main():
     latest_meta_dir = subdirs[-1]
     meta_path = latest_meta_dir / "chapter_meta.json"
     if not meta_path.exists():
-        print(f"⚠ Meta file not found: {meta_path}. Running generate_structure.py")
         subprocess.run(["python", "scripts/generate_structure.py"], check=True)
     meta = json.loads(meta_path.read_text(encoding="utf-8"))
     chapters = meta.get("chapters", [])
+    character_map = meta.get("character_map", {})
 
     # 4) ポリシー読み込み
     policy_file = Path("config/generate_policy.md")
     policy_text = policy_file.read_text(encoding="utf-8") if policy_file.exists() else ""
 
-    # 生成関数
+    # 生成関数（safe ID対応）
     def generate_script(ch):
-        prompt = f"{policy_text}\n\n# 章タイトル: {ch['title']}\n# 概要: {ch['summary']}\n"
+        prompt = f"""{policy_text}
+
+# キャラクターIDマッピング
+{json.dumps(character_map, ensure_ascii=False)}
+
+# 章タイトル: {ch['title']}
+# 概要: {ch['summary']}
+"""
         res = client.chat.completions.create(
             model="gpt-4-turbo",
             messages=[
-                {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。"},
+                {"role": "system", "content": "あなたはノベルゲーム制作者です。TyranoScriptを正確に生成してください。キャラクターIDはマッピングに従い、storageパスに安全なIDを使用してください。"},
                 {"role": "user",   "content": prompt}
             ],
             temperature=0.8
         )
-        return res.choices[0].message.content
+        ks_code = res.choices[0].message.content
+        # storageパス内の生ID→safeID変換
+        for raw, safe in character_map.items():
+            ks_code = ks_code.replace(f'storage="{raw}', f'storage="{safe}')
+            ks_code = ks_code.replace(f'voice storage="{raw}', f'voice storage="{safe}')
+        return ks_code
 
     # 5) 章ファイル生成
     chapter_files = []
@@ -84,13 +96,14 @@ def main():
         (scenario_dir / fname).write_text(ks_code + "\n[return]", encoding="utf-8")
         chapter_files.append(fname)
 
-    # first.ks
+    # first.ks の生成
     (scenario_dir / "first.ks").write_text('[jump storage="title.ks"]\n', encoding="utf-8")
-    # scenario.ks
+
+    # scenario.ks の生成
     calls = "\n".join(f'[call storage="{f}"]' for f in chapter_files)
     (scenario_dir / "scenario.ks").write_text(calls, encoding="utf-8")
 
-    # title.ks
+    # title.ks の生成
     title_code = """
 ; タイトル画面
 [layopt layer=0 visible=true]
@@ -110,7 +123,7 @@ def main():
 """
     (scenario_dir / "title.ks").write_text(title_code, encoding="utf-8")
 
-    # ending.ks
+    # ending.ks の生成
     ending_code = """
 ; エンディング画面
 [layopt layer=0 visible=true]
@@ -122,7 +135,7 @@ def main():
 """
     (scenario_dir / "ending.ks").write_text(ending_code, encoding="utf-8")
 
-    # menu_button.ks
+    # menu_button.ks の生成
     menu_code = """
 ; メニュー画面カスタム
 [link storage="save.ks"    text="📌 Save"]
@@ -132,10 +145,10 @@ def main():
 """
     (system_dir / "menu_button.ks").write_text(menu_code, encoding="utf-8")
 
-    # plugin.kst
+    # plugin.kst の生成
     (system_dir / "plugin.kst").write_text("; プラグイン定義用ファイル（自動生成）\n", encoding="utf-8")
 
-    # ダミー save/load/backlog
+    # 空ファイル補完
     for fname in ["save.ks", "load.ks", "backlog.ks"]:
         p = scenario_dir / fname
         if not p.exists():
@@ -144,5 +157,4 @@ def main():
     print(f"✅ TyranoScript 全体構成を生成しました → {output_dir}")
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__m
