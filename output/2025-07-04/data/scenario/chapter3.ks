@@ -1,74 +1,73 @@
-以下は、指定された制作方針に基づいたTyranoScriptの一部で、主人公と怒りやすい女性のキャラクターが登場するシナリオの例です。各要素に対して適切な命名規則を適用し、感情の起伏やシーンの変化を表現しています。
+以下は、指定された制作方針とフィードバックを基に、TyranoScript形式で記述されたシナリオスクリプト例です。このシナリオは「帰り道」という章で、主人公と彼女（怒りやすい女性）との対話を中心に展開します。
 
-```tyranoscript
+```tyrano
+;タイトルとメタ情報
 [title name="帰り道"]
+[s]
+[bg storage="street_evening.jpg" time=1000]
 
-; BGMと背景のセットアップ
-[bg storage="road_bg.jpg" time=1000]
-[playbgm storage="evening_walk.mp3"]
+;BGM設定
+[playbgm storage="evening_walk.mp3" loop=true]
 
-; キャラクターの表示
-[char_show name="main_character" storage="main_character_normal.png" jname="主人公" ]
-[char_show name="angry_woman" storage="angry_woman_angry.png" jname="怒りやすい女性" ]
+;キャラクター表示
+[chara_show name="main_character" storage="main_character_normal.png" jname="主人公" time=600]
+[chara_show name="angry_woman" storage="angry_woman_normal.png" jname="彼女" time=600]
 
-; シーン開始
+;シーン開始
 [cm]
-[ct]
-[playse storage="footsteps.mp3"]
-[ptext]
-「夕暮れの中、私たちは帰り道を歩いていた。空気は冷たく、風が時折頬を撫でる。」
-[ptext]
-「彼女はいつものように不満そうに前を歩いている。」
-[endtext]
+[chara_pos name="main_character" left=true]
+[chara_pos name="angry_woman" left=false]
 
-; ダイアログ開始
-[l]
+[p]
+主人公「今日もいつもと同じ道を歩いているけど、何か違う気がするんだ。」
 [voice storage="main_character_001.mp3"]
-主人公「今日はどうしたの？そんなに怒って。」
-[wait time=1000]
 
+[p]
+彼女「そう？ 私にとっては、ただの帰り道よ。特別なことなんて何もないわ。」
 [voice storage="angry_woman_001.mp3"]
-怒りやすい女性「いつものことじゃない。ただ、ずっと考え事をしていただけよ。」
 
+[p]
+主人公「いや、今日は何かが違うんだ。君がいつもと違う気がする。どうしたんだい？」
 [voice storage="main_character_002.mp3"]
-主人公「ずっと考え事？何について？」
-[wait time=1000]
 
-; 怒りやすい女性の過去について語る
+[p]
+彼女「……実はね、昔のことを思い出していたの。」
 [voice storage="angry_woman_002.mp3"]
-怒りやすい女性「私の過去のこと。私がこうなった理由、知りたい？」
-[wait time=1000]
 
-; プレイヤーの選択
-[select name="choice1" color="#FFFFFF" background_color="#000000"]
-「はい、知りたいです。」
-[gs jump="story_past"]
-「今は聞かない方がいいかもしれない。」
-[gs jump="story_continue"]
+;感情の変化
+[chara_mod name="angry_woman" storage="angry_woman_sad.png" cross=true time=500]
+
+[p]
+主人公「昔のこと？」
+[voice storage="main_character_003.mp3"]
+
+[p]
+彼女「うん、私がなぜ怒りやすいのか…その理由について。」
+[voice storage="angry_woman_003.mp3"]
+
+;選択肢
+[select]
+「もっと詳しく聞かせてくれる？」
+[voice storage="select_001.mp3"]
+    [s]
+    [jump target="Chapter_DeepDive.ks"]
+「大変だったね、でも今はここにいるよ」
+[voice storage="select_002.mp3"]
+    [s]
+    [jump target="Chapter_Support.ks"]
 [endselect]
 
-[er]
-; 背景とBGMの変更をここで行うなど、シナリオに応じた展開が必要
-
-; 分岐後のラベル
-*story_past
-[bg storage="flashback_bg.jpg" time=1000]
-[playbgm storage="sad_theme.mp3"]
-[voice storage="angry_woman_003.mp3"]
-怒りやすい女性「私が子供の頃...」
-[ptext]
-彼女は少しずつ、自分の過去を語り始めた。悲しい記憶が多いようだが、彼女の表情は少しずつ和らいでいく。
-[endtext]
-[return]
-
-*story_continue
-[voice storage="angry_woman_004.mp3"]
-怒りやすい女性「ありがとう、気遣いは嬉しいわ。」
-[ptext]
-少し気まずい沈黙が流れるが、私たちは言葉を交わすことなく歩き続ける。
-[endtext]
-[return]
+;エンディングへの接続
+[jump target="scenario_end.ks"]
 ```
 
-このスクリプトは、選択肢による分岐、キャラクターの感情の表現、シーンの視覚的・聴覚的変化、そしてプレイヤーに与える影響を工夫しています。また、各シーンのBGMや背景画像が変わることで、視覚的な変化を感じることができます。
+このスクリプトは、以下の要素を含みます：
+
+- 背景画像とBGMの設定
+- キャラクターの表示とポジション設定
+- ダイアログの進行とキャラクター間の感情の変化
+- 複数の選択肢とそれに応じたシナリオ分岐
+- シナリオの連結と終了
+
+ここからさらに細かい調整や追加が可能ですが、これが基本形となります。
 [return]

@@ -1,75 +1,78 @@
-```tyranoscript
+```ks
+; ここから「駅での出会い」のシナリオが始まります。
 [title name="駅での出会い"]
 
-; 初期設定
-[s]
+; 背景とBGM設定
 [bg storage="station.jpg" time=1000]
-[playbgm storage="ambient_station.mp3" loop=true]
+[playbgm storage="station_theme.mp3"]
 
-[chara_show name="main_character" storage="main_character_normal.png" jname="主人公"]
-[chara_show name="angry_woman" storage="angry_woman_angry.png" jname="怒りっぽい女性" ]
-[cm]
+; 初期シーン：主人公が駅に到着する。
+[chara_show name="main_character" storage="main_character_normal.png" time=500]
+[ptext]
+「ここが、待ち合わせ場所か…」
+[ptext]
 
-; シナリオ開始
-[ptext size=30]
-「なんでこんなことになるの！？全然ダメじゃない！」
-[wt]
-
-[chara_mod name="angry_woman" face="angry" sync=false]
+; 怒りっぽい女性が登場
+[chara_show name="angry_woman" storage="angry_woman_angry.png" time=500]
+[ptext]
+「なんでこの電車、こんなに遅れてるのよ！」
 [voice storage="angry_001.mp3"]
 [ptext]
-[add_text]主人公はそっと彼女を見つめ返す。
-[wt]
 
-[chara_mod name="main_character" face="calm" sync=false]
-[voice storage="calm_response_001.mp3"]
+; 主人公が彼女に静かに話しかける
+[chara_mod name="main_character" storage="main_character_smile.png" time=300]
 [ptext]
-[add_text]「大丈夫ですか？何かお手伝いしましょうか？」
-[wt]
+「大変ですね。でも、無事に到着してよかったですよ。」
+[voice storage="calm_002.mp3"]
+[ptext]
 
-; 分岐選択
-[s]
+; 彼女の表情が少し和らぐ
+[chara_mod name="angry_woman" storage="angry_woman_calm.png" time=300]
+[ptext]
+「えっ、あ、うん…そうね。ごめんなさい、ちょっとカリカリしてたわ。」
+[voice storage="apologetic_003.mp3"]
+[ptext]
+
+; 分岐点：プレイヤーの選択によって展開が変わる
 [select]
-「ごめんなさい、ちょっとイライラしているだけなんです...」[l]
-[jump target="calmdown"]
-「あなたに何がわかるの！」[l]
-[jump target="stayangry"]
+「どうしたの？大丈夫？」[jump target="Choice1"]
+「電車の遅延、気になりますよね。」[jump target="Choice2"]
 [endselect]
 
-*calmdown
-[bg storage="station_calm.jpg" time=500]
-[playbgm storage="calming_music.mp3" loop=true]
-[chara_mod name="angry_woman" face="normal" sync=false]
-[voice storage="calm_002.mp3"]
-[ptext size=30]
-「ごめんなさい、ただの悪い日でした... あなたはとても親切ですね。」
-[wt]
-[link target="common_end"]
+*Choice1
+[chara_mod name="angry_woman" storage="angry_woman_talk.png" time=300]
+[ptext]
+「実は、今日大切な面接があって…。不安でいっぱいで。」
+[voice storage="worried_004.mp3"]
+[ptext]
+[jump target="CommonEnding"]
 
-*stayangry
-[chara_mod name="angry_woman" face="very_angry" sync=false]
-[voice storage="angry_002.mp3"]
-[ptext size=30]
-「私の感情なんてどうでもいいの！ ただ消えて！」
-[wt]
-[link target="common_end"]
+*Choice2
+[chara_mod name="angry_woman" storage="angry_woman_sad.png" time=300]
+[ptext]
+「そうね、私も気をつけないと。ありがとう。」
+[voice storage="grateful_005.mp3"]
+[ptext]
+[jump target="CommonEnding"]
 
-; 共通エンディング部分
-*common_end
-[cm]
-[bg storage="station_night.jpg" time=1000]
-[playbgm storage="evening_ambience.mp3" loop=true]
-[chara_hide name="angry_woman"]
-[chara_mod name="main_character" face="thoughtful" sync=false]
-[voice storage="reflective_003.mp3"]
-[ptext size=30]
-[center]「人はいつでも何かと戦っている... 誰にもやさしい言葉が必要だ。」[/center]
-[wt]
-[ptext size=30]
-[center]― 終わり ―[/center]
-[wt]
+*CommonEnding
+[ptext]
+「どちらにしても、ここで落ち着けて良かったですね。」
+[voice storage="relief_006.mp3"]
+[bgm_stop time=1000]
+[bg storage="cafe.jpg" time=1000]
+[playbgm storage="cafe_theme.mp3"]
+[ptext]
+「さあ、カフェでも行きませんか？少し休むと気持ちも新たにできますよ。」
+[voice storage="invitation_007.mp3"]
+[ptext]
+
+; エンディングへ
+[ptext]
+「二人は少し距離を縮めながら、次の場所へと向かった。」
+[bgm_stop time=1000]
+[ptext]
 [end]
 ```
-
-このスクリプトは、指定された条件とゲーム制作方針に基づいて、TyranoScriptの構文で正確に記述されています。キャラクターの感情表現、背景、音楽の切り替えを含んでおり、プレイヤーが選んだ選択肢によってストーリーが分岐します。
+このスクリプトは、キャラクターの感情的な変化とプレイヤーの選択に基づいた分岐を提供します。また、シーンの移行、BGMの変化が物語の流れを豊かにします。
 [return]

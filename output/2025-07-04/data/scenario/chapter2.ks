@@ -1,87 +1,83 @@
-```tyrano
-[module name="scenario"]
+ここでは、提供した情報に基づいてTyranoScriptを生成します。キャラクターIDマッピングに従い、安全なパスを使用したstorageのパスも提供します。
 
-; シナリオファイルのタイトル
-*title
-カフェでの対話
+### ゲームスクリプトの生成: カフェでの対話
 
-; 初期設定、背景画像とBGMの設定
-*scene_setup
-[bg storage="cafe.jpg" time=1000]
-[playbgm storage="cafe_bgm.mp3"]
+#### 定義と初期設定
+
+```tyranoscript
+[title name="カフェでの対話"]
+
+; プレロードアセット
+[preload storage="bg_cafe.jpg, angry_woman.png, main_character.png, bgm_cafe.mp3, voice_angry_woman_001.mp3"]
+
+; ゲーム内のBGMと背景設定
+[bg storage="bg_cafe.jpg"]
+[playbgm storage="bgm_cafe.mp3" loop=true]
 
 ; キャラクター表示
-[char_show name="main_character" storage="main_character.png" time=500]
-[char_show name="angry_woman" storage="angry_woman.png" time=500]
+[charshow name="main_character" storage="main_character.png" jname="主人公"]
+[charshow name="angry_woman" storage="angry_woman.png" jname="彼女"]
 
-; 初期会話
+; シナリオ開始
 [s]
-「今日はどうしたんだい？なんだかご機嫌斜めだね。」
-[voice storage="main_character_line_001.mp3"]
-[chara_mod name="main_character" face="normal"]
+「どうしてそんなに怒ってるの？」[r]
 
-[s]
-「別に…。特に何も…。」
-[voice storage="angry_woman_line_001.mp3"]
-[chara_mod name="angry_woman" face="upset"]
+[voice storage="voice_angry_woman_001.mp3"]
+「あなたには関係ないわ！」[r]
 
-; 分岐の導入
-[s]
-「本当に何でもないの？何かあったら僕に言ってくれてもいいんだよ。」
-[voice storage="main_character_line_002.mp3"]
-
-; 選択肢
-[select link="真実を聞く" target=*choice_truth]
-[select link="彼女をそのままにする" target=*choice_ignore]
-
-*choice_truth
-[s]
-「うん、実は……」
-[voice storage="angry_woman_line_002.mp3"]
-[chara_mod name="angry_woman" face="speaking"]
-
-[s]
-ここで、彼女は徐々に本当の気持ちを打ち明け始める。
-
-[s]
-[bgm_stop time=2000]
-[playbgm storage="reveal_bgm.mp3"]
-[chara_mod name="angry_woman" face="relieved"]
-
-*choice_ignore
-[s]
-「なるほど、それなら無理には聞かないよ。」
-[voice storage="main_character_line_003.mp3"]
-[chara_mod name="main_character" face="smile"]
-
-[s]
-しかし、その選択が後に重い空気を作り出してしまう。
-
-; 分岐後の共通シーン
-*scene_after_choices
-[s]
-[bgm_stop time=1000]
-[playbgm storage="aftermath_bgm.mp3"]
-[s]
-ちょうどこのとき、カフェの中に新しい客がやって来て、場の空気が少しずつ変わり始める。
-
-[s]
-「今日はここまでにしようか。」
-[voice storage="main_character_line_004.mp3"]
-[s]
-「うん、そうね。ありがとう、話を聞いてくれて。」
-[voice storage="angry_woman_line_003.mp3"]
-[chara_mod name="angry_woman" face="thankful"]
-
-[s]
-そして、二人はカフェを後にした。
-
-; エンディング
-*ending
-[s]
-背景をフェードアウトして、ゲーム終了。
-[end]
+; 感情の変化を示す分岐
+[cm]
+[select link="理解を示す|scene01a" target="scene_01a.ks" storage="scene_01a.ks"]
+[select link="さらに問い詰める|scene01b" target="scene_01b.ks" storage="scene_01b.ks"]
 ```
 
-このスクリプトは、カフェでの対話という状況を設定し、主人公と彼女（angry woman）の間の感情的なやり取り及びプレイヤーの選択によるストーリーの分岐を示しています。適切なBGMとキャラクターの表情変化で、感情の変化を盛り込みつつ、リアルタイムの音声とともに物語が進行します。
+#### 分岐スクリプト: 理解を示す (scene_01a.ks)
+
+```tyranoscript
+[title name="理解を示す"]
+
+; 背景音楽の変更
+[stopbgm]
+[playbgm storage="bgm_calm.mp3" loop=true]
+
+[charshow name="main_character" storage="main_character.png"]
+[charshow name="angry_woman" storage="angry_woman.png"]
+
+[s]
+「わかった、君の気持ちを尊重するよ。」[r]
+
+[voice storage="voice_calm_woman_001.mp3"]
+「...本当？ありがとう。少し落ち着いたわ。」[r]
+
+[cm]
+; 感情の変化によるエンディングへの導入
+[jump target="ending.ks" storage="ending.ks"]
+```
+
+#### 分岐スクリプト: さらに問い詰める (scene_01b.ks)
+
+```tyranoscript
+[title name="さらに問い詰める"]
+
+; 背景音楽の維持
+[playbgm storage="bgm_tense.mp3" loop=true]
+
+[charshow name="main_character" storage="main_character.png"]
+[charshow name="angry_woman" storage="angry_woman.png"]
+
+[s]
+「でも、何か原因があるんじゃないか？」[r]
+
+[voice storage="voice_angry_woman_002.mp3"]
+「うるさいわね！もういい、帰る！」[r]
+
+[cm]
+; 感情の変化による悲しいエンディングへの導入
+[jump target="sad_ending.ks" storage="sad_ending.ks"]
+```
+
+### 注意点
+- 各章は`scenario.ks`から順に呼び出され、適切なファイル名とstorageのパスが指定されています。
+- 音声ファイル、画像、そしてBGMは事前に準備し、正確なファイル名を指定する必要があります。
+- 分岐ごとの感情変化は、プレイヤーの選択によって異なる経験を提供します。
 [return]

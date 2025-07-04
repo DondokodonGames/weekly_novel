@@ -1,68 +1,67 @@
-```ks
-; scenario.ks - 最初のchapter
-[s]
+以下は、「最後の会話」という章タイトルのもと、TyranoScript形式でのゲームスクリプトの基本的な構成です。このスクリプトは、指定された制作方針とフィードバックを反映して設計されています。
+
+```tyranoscript
 [title name="最後の会話"]
 
-; 背景設定
+; 初期設定
 [bg storage="room.jpg" time=1000]
 [playbgm storage="calm_theme.mp3"]
 
-; キャラクターの登場
-[chara_show name="angry_woman" storage="angry_woman_normal.png" time=1000]
-[chara_show name="main_character" storage="main_character_smile.png" time=1000]
+; キャラクターの表示
+[char show="main_character" storage="main_character_normal.png" jname="主人公"]
 
-; セリフ開始
-[cm]
-[chara_face name="angry_woman" face="angry_woman_smile.png"]
-[ptext time=500]
-「本当にずっと、ありがとうね。こんなに話せたのは初めてかも。」
-[wait time=1000]
+; 初めの会話
+[char show="angry_woman" storage="angry_woman_smile.png" jname="彼女"]
+[voice storage="angry_woman_happy_001.mp3"]
+「主人公、今まで本当にありがとう。こんな私と過ごしてくれて。」
 
-[chara_face name="main_character" face="main_character_normal.png"]
-[ptext time=500]
-「いや、こちらこそ。色々と学べたよ。」
-[wait time=1000]
+[char name="主人公"]
+[voice storage="main_character_thanks_001.mp3"]
+「いや、俺こそありがとう。君の笑顔が見られて嬉しいよ。」
 
-; 選択肢の提示
-[select]
-「これからも、友達として...」
-[jump target="friend_path.ks"]
-「もっと別の関係として...」
-[jump target="more_path.ks"]
-[endselect]
-
-; friend_path.ks - 友達としての関係を選択した場合
+; 分岐点
 [s]
-[bg storage="cafe.jpg" time=1000]
-[playbgm storage="happy_theme.mp3"]
-[chara_show name="angry_woman" storage="angry_woman_happy.png" time=1000]
-[ptext time=500]
-「それなら、これからも色々教えてね。」
-[wait time=1000]
-
-[chara_show name="main_character" storage="main_character_happy.png" time=1000]
-[ptext time=500]
-「もちろんだよ。」
-[wait time=1000]
-
-[endchapter]
-
-; more_path.ks - もっと深い関係を望む場合
+[link target="choice1" storage="last_conversation_choice1.ks" text="「これからもずっと一緒にいよう」"]
+[link target="choice2" storage="last_conversation_choice2.ks" text="「君が成長できたなら、それでいい」"]
 [s]
-[bg storage="night_park.jpg" time=1000]
-[playbgm storage="romantic_theme.mp3"]
-[chara_show name="angry_woman" storage="angry_woman_blush.png" time=1000]
-[ptext time=500]
-「えっ、本当？私も同じこと考えてた...」
-[wait time=1000]
 
-[chara_show name="main_character" storage="main_character_blush.png" time=1000]
-[ptext time=500]
-「じゃあ、今度はデートとして出かけようか。」
-[wait time=1000]
+; 選択された後の結果に基づいて進行
+[call target="*choice1"]
+[call target="*choice2"]
 
-[endchapter]
+; 選択肢１のシナリオ
+*choice1
+[char show="angry_woman" storage="angry_woman_happy.png" jname="彼女"]
+[voice storage="angry_woman_happy_002.mp3"]
+「そう言ってくれるとすごく安心する。これからもよろしくね。」
+
+[char name="主人公"]
+[voice storage="main_character_happy_001.mp3"]
+「ああ、もちろんだよ。」
+[jump storage="end.ks"]
+
+; 選択肢２のシナリオ
+*choice2
+[char show="angry_woman" storage="angry_woman_serious.png" jname="彼女"]
+[voice storage="angry_woman_serious_001.mp3"]
+「ありがとう、主人公。私も自分に自信を持てるようになったよ。」
+
+[char name="主人公"]
+[voice storage="main_character_sad_001.mp3"]
+「それは良かった。君の幸せが俺にとって一番だからな。」
+[jump storage="end.ks"]
+
+; エンディングへの移行
+[end]
 ```
 
-このスクリプトでは、適切な背景とBGMの設定、キャラクターの表情変更、選択肢による物語の分岐が含まれています。各分岐は別の`.ks` ファイルで管理され、続きの物語が異なるシナリオに分けられています。これにより、プレイヤーの選択がゲームの展開に直接影響を与える体験を提供します。
+このスクリプトは、以下の要素を含んでいます：
+
+1. **背景とBGMの設定**：シーンの情景を設定し、プレイヤーが物語の雰囲気に浸れるようにします。
+2. **キャラクターの表示と対話**：各キャラクターがどう見えるか（表情や立ち位置）と、彼らの会話を通じて物語が進行します。
+3. **音声の使用**：キャラクターのセリフごとに合わせたボイスファイルを再生し、よりリアルな対話体験を提供します。
+4. **選択肢と分岐**：プレイヤーに選択を提供し、その選択によってストーリーが変化します。
+5. **エンディングの設計**：選択に応じた異なる結果を用意し、物語性を高めます。
+
+この例では、キャラクターIDとstorageパスは既存のマッピングと安全なIDを使用しています。
 [return]
