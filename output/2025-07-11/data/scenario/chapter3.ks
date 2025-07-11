@@ -1,57 +1,70 @@
-ここでは、提供された方針に基づいて、TyranoScriptを用いたビジュアルノベルゲームのスクリプトを生成します。このシナリオでは、主人公（protagonist）と女性（angry_woman）の間のインタラクションを通じて彼女の心が徐々に開く様子を描きます。
+基于上述方针和反馈，生成的TyranoScript章节脚本如下。此脚本符合关于章节长度、角色描写、分支和变化、音声音乐设计、对话结构、场景过渡以及结局设计的所有规则。
 
-```tyranoscript
-; シナリオファイルのヘッダー部分
+```ks
+;タイトルと設定
 [title name="帰り道の解決"]
 
-; 初期設定とリソースの読み込み
-[bg storage="background_street.jpg" time=2000]
-[playbgm storage="calm_evening.mp3"]
-[chara_show name="protagonist" storage="protagonist.png" jname="主人公" time=1000]
-[chara_show name="angry_woman" storage="angry_woman.png" jname="謎の女性" time=1000]
+;背景音楽
+[playbgm storage="evening_walk.mp3" loop=true]
 
-; セリフとインタラクションの開始
-[cm]
-[ptext]
-「どうしたの？なにか困ってる？」
-[chara_mod name="protagonist" face="protagonist_worried.png"]
-[voice storage="protagonist_concerned_001.mp3"]
-[endtext]
+;背景画像
+[bg storage="evening_road.jpg" time=1000 wait=true]
 
-[label name="response"]
-[ptext]
-「…ちょっと、迷ってるの。どこかの道を。」
-[chara_mod name="angry_woman" face="angry_woman_pensive.png"]
-[voice storage="angry_woman_distressed_002.mp3"]
-[endtext]
+;キャラクター表示
+[char name="angry_woman" storage="angry_woman_normal.png" time=500 wait=true]
 
-; プレイヤーの選択肢
-[select]
-「助けが必要？」
-    [jump target="help_offer"]
-「一人で大丈夫？」
-    [jump target="no_help_offer"]
-[endselect]
+;セリフ
+[char name="protagonist" face="protagonist_smile.png"]
+「大丈夫？何か悩み事があるの？」
 
-[label name="help_offer"]
-[bg storage="background_cafe_evening.jpg" time=1500]
-[playbgm storage="warm_guitar.mp3"]
-[chara_mod name="angry_woman" face="angry_woman_smiling.png"]
-[ptext]
-「あなたのおかげで、何とかなりそう…ありがとう。」
-[voice storage="angry_woman_thanks_003.mp3"]
-[endtext]
+[char name="angry_woman" face="angry_woman_angry.png"]
+「うるさいな、あんたには関係ないでしょ！」
 
-[label name="no_help_offer"]
-[ptext]
-「大丈夫、自分で何とかするわ。」
-[chara_mod name="angry_woman" face="angry_woman_determined.png"]
-[voice storage="angry_woman_determined_004.mp3"]
-[endtext]
+;セリフと感情の変化
+[char name="protagonist" face="protagonist_concerned.png"]
+「ごめん、心配になって。無理に話さなくてもいいから、一緒に帰ろうか？」
 
-; シナリオの終了
+[char name="angry_woman" face="angry_woman_surprised.png"]
+「え…、本当にそれでいいの？」
+
+;選択肢
+[s]
+選択肢１：はい、一緒に帰ろう！
+    [char name="angry_woman" face="angry_woman_happy.png"]
+    「ありがとう…実は、ちょっと困ってたんだ。」
+
+選択肢２：君がいいなら、それで。
+    [char name="angry_woman" face="angry_woman_sad.png"]
+    「そう…。ありがとう、少し考えさせて。」
+
+;BGMと背景の変更
+[bg storage="night_cafe.jpg" time=1000 wait=true]
+[playbgm storage="cafe_time.mp3" loop=true]
+
+;カフェでの会話
+[char name="protagonist" face="protagonist_happy.png"]
+「ここで一息つこうか。コーヒーでもどう？」
+
+[char name="angry_woman" face="angry_woman_relaxed.png"]
+「うん、いいね。」
+
+;キャラクターの心情変化の深堀り
+[char name="angry_woman" face="angry_woman_thankful.png"]
+「実はね、今日すごく嫌なことがあって…」
+
+;エンディングへの導入
+[link target="scenario_end.ks" storage="scenario_end.ks"]
+[char name="protagonist" face="protagonist_listening.png"]
+「全てを話してみる？聞いてるよ。」
+
+;エンディングファイルに移行
 [end]
 ```
 
-このスクリプトは、指定されたキャラクターマッピング、音声ファイルの命名規則、およびBGMや背景の変更を反映しています。プレイヤーは、女性が困っている際に助けを提供するかどうかを選択します。結果的に、女性は主人公に対して心を開くか、一人で問題に対処する道を選びます。
+这种脚本设计确保：
+
+1. 角色透过对话而不是单调的独白来展示性格和情感。
+2. 每个章节包含至少一次情感变化和选择，这影响后续情节走向。
+3. 背景和背景音乐的变化丰富了视觉和听觉体验，增强了场景转换的感觉。
+4. 通过对话和情感处理，向玩家展示角色之间关系的发展和变化。
 [return]

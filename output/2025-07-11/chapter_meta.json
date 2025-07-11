@@ -1,16 +1,16 @@
 {
-  "art_style": "リアルなタッチで感情表現豊かなキャラクターデザイン",
-  "sound_mood": "静かで感情に呼応するピアノBGM",
-  "visual_theme": "夜の公園で話すような、静かでやさしい空気感",
+  "art_style": "リアルで感情表現豊かなキャラクターデザイン",
+  "sound_mood": "静かなピアノ音楽で感情の起伏を表現",
+  "visual_theme": "夜の公園を思わせる静かでやさしい演出",
   "chapters": [
     {
       "chapter_index": 1,
       "title": "駅での出会い",
-      "summary": "駅での些細な出来事から、女性が怒りを爆発させる。",
+      "summary": "主人公は駅で怒りっぽい女性と出会う。彼女は些細なことで怒りを爆発させる。",
       "backgrounds": [
         "station.jpg"
       ],
-      "bgm": "tense_piano.mp3",
+      "bgm": "quiet_piano_01.mp3",
       "characters": [
         "angry_woman",
         "protagonist"
@@ -19,13 +19,13 @@
         {
           "character": "angry_woman",
           "voice_file": "angry_001.mp3",
-          "text": "なんでこんなことになるの！？",
+          "text": "何でこんなこともできないの！？",
           "safe_character": "angry_woman"
         },
         {
           "character": "protagonist",
-          "voice_file": "calm_001.mp3",
-          "text": "落ち着いて、何が起こったの？",
+          "voice_file": "calm_response_001.mp3",
+          "text": "大丈夫ですか？何かお手伝いしましょうか？",
           "safe_character": "protagonist"
         }
       ],
@@ -36,12 +36,12 @@
     },
     {
       "chapter_index": 2,
-      "title": "カフェでの対話",
-      "summary": "カフェに移動し、主人公が女性の誤解をやさしく解いていく。",
+      "title": "カフェでの解説",
+      "summary": "主人公は彼女をカフェに誘い、落ち着いて話を聞く。誤解が少しずつ解け始める。",
       "backgrounds": [
         "cafe.jpg"
       ],
-      "bgm": "soft_piano.mp3",
+      "bgm": "quiet_piano_02.mp3",
       "characters": [
         "angry_woman",
         "protagonist"
@@ -50,13 +50,13 @@
         {
           "character": "angry_woman",
           "voice_file": "angry_002.mp3",
-          "text": "いつもいつも、こんなことばかり...",
+          "text": "なんで私ばかりこんな目に…",
           "safe_character": "angry_woman"
         },
         {
           "character": "protagonist",
-          "voice_file": "calm_002.mp3",
-          "text": "大丈夫だよ、一緒に解決しよう。",
+          "voice_file": "calm_response_002.mp3",
+          "text": "辛かったですね。ゆっくり話してください。",
           "safe_character": "protagonist"
         }
       ],
@@ -68,11 +68,11 @@
     {
       "chapter_index": 3,
       "title": "帰り道の和解",
-      "summary": "歩道を歩きながら、二人の間に理解が深まる。",
+      "summary": "帰り道、主人公は彼女の話を聞き続ける。彼女は徐々に心を開いていく。",
       "backgrounds": [
         "sidewalk.jpg"
       ],
-      "bgm": "rising_piano.mp3",
+      "bgm": "quiet_piano_03.mp3",
       "characters": [
         "angry_woman",
         "protagonist"
@@ -80,14 +80,14 @@
       "lines": [
         {
           "character": "angry_woman",
-          "voice_file": "softening_001.mp3",
-          "text": "あなたのおかげで少し楽になったよ。",
+          "voice_file": "angry_003.mp3",
+          "text": "こんなこと、誰にも話したことなかった…",
           "safe_character": "angry_woman"
         },
         {
           "character": "protagonist",
-          "voice_file": "calm_003.mp3",
-          "text": "いつも話を聞けて嬉しいよ。",
+          "voice_file": "calm_response_003.mp3",
+          "text": "私はいつでもあなたの話を聞きますよ。",
           "safe_character": "protagonist"
         }
       ],
@@ -98,12 +98,12 @@
     },
     {
       "chapter_index": 4,
-      "title": "室内での真実",
-      "summary": "室内での最後の会話。女性が心を開いて本当の気持ちを明かす。",
+      "title": "室内での涙と笑顔",
+      "summary": "部屋での最後の会話。彼女は心の氷が解け、涙と共に笑顔を見せる。",
       "backgrounds": [
-        "indoor.jpg"
+        "room.jpg"
       ],
-      "bgm": "emotional_piano.mp3",
+      "bgm": "quiet_piano_04.mp3",
       "characters": [
         "angry_woman",
         "protagonist"
@@ -111,14 +111,14 @@
       "lines": [
         {
           "character": "angry_woman",
-          "voice_file": "crying_001.mp3",
-          "text": "ずっと怒ってばかりでごめんね、本当は怖かっただけなの...",
+          "voice_file": "angry_004.mp3",
+          "text": "ありがとう、こんなに心が軽くなったのは久しぶり。",
           "safe_character": "angry_woman"
         },
         {
           "character": "protagonist",
-          "voice_file": "calm_004.mp3",
-          "text": "君のそばにいることができて、僕は幸せだよ。",
+          "voice_file": "calm_response_004.mp3",
+          "text": "いつでも、あなたのそばにいます。",
           "safe_character": "protagonist"
         }
       ],

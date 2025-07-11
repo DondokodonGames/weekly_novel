@@ -1,78 +1,81 @@
-Based on the given directives and character ID mapping for the visual novel game, here's an example TyranoScript `.ks` file for the chapter titled "カフェでの対話".
+以下に、指定されたゲームシナリオ「カフェでの対話」のTyranoScript形式のスクリプトを示します。このスクリプトは、指定された品質制約とキャラクターIDマッピングに基づいています。
 
-```tyrano
-; Scenario file for the chapter "カフェでの対話"
+```tyranoscript
 [title name="カフェでの対話"]
 
-; Setting the scene
+; シーンの開始
 [bg storage="cafe.jpg" time=1000]
 [playbgm storage="cafe_bgm.mp3"]
 
-; Introducing characters in the scene
-[chara_show name="protagonist" storage="protagonist_normal.png" jname="主人公" time=500]
-[chara_show name="angry_woman" storage="angry_woman_angry.png" jname="怒っている女性" time=500]
+[chara_show name="protagonist" storage="protagonist_normal.png" time=500]
+; 主人公の初期セリフ
+[voice storage="voice_protagonist_001.mp3"]
+[l]
+「ここで落ち着けるかな…何が彼女をそんなに怒らせたんだろう？」
 
-; Dialogue sequence
+[chara_show name="angry_woman" storage="angry_woman_angry.png" time=500]
+[voice storage="voice_angry_woman_001.mp3"]
+[l]
+「あなたに何が分かるの！？ちょっとは理解しようとして！」
+
+[playse storage="cafe_ambient_noise.mp3"]
+[chara_mod name="protagonist" storage="protagonist_worried.png"]
+[voice storage="voice_protagonist_002.mp3"]
+[l]
+「ごめん、話を聞かせて。何があったのか教えてほしいんだ。」
+
+[chara_mod name="angry_woman" storage="angry_woman_calm.png"]
+[voice storage="voice_angry_woman_002.mp3"]
+[l]
+「はぁ…実はね、最近仕事で…」
+
+; 分岐点の設定
 [s]
-[chara_face name="protagonist" storage="protagonist_smile.png"]
-[voice storage="protagonist_001.mp3"]
-主人公「ここで何が起こったか教えてもらえますか？」
+選択肢を表示
+[select link="理解を示す" target=*show_understanding]
+[select link="もっと詳しく聞く" target=*ask_more]
 
-[s]
-[chara_face name="angry_woman" storage="angry_woman_angry.png"]
-[voice storage="angry_woman_001.mp3"]
-怒っている女性「私はただ、ちょっとイライラしているだけよ。特に大したことはないわ。」
+*show_understanding
+[chara_mod name="protagonist" storage="protagonist_smiling.png"]
+[voice storage="voice_protagonist_003.mp3"]
+[l]
+「大変だったんだね。君の気持ち、少しは理解できるよ。」
 
-[s]
-[chara_face name="protagonist" storage="protagonist_concerned.png"]
-[voice storage="protagonist_002.mp3"]
-主人公「もし気にさわったらごめんなさい。お手伝いできることがあれば、言ってください。」
+[chara_mod name="angry_woman" storage="angry_woman_relief.png"]
+[voice storage="voice_angry_woman_003.mp3"]
+[l]
+「ありがとう、それだけで少し楽になるよ。」
 
-[s]
-[chara_face name="angry_woman" storage="angry_woman_sad.png"]
-[voice storage="angry_woman_002.mp3"]
-怒っている女性「あなたは親切ね。でも、今は一人にしてほしいの。」
+[jump target="end_conversation"]
 
-; Choice for the player
-[select name="What to do next?"]
-[option text="彼女を一人にする" target="LeaveHerAlone"]
-[option text="話を続ける" target="ContinueTalking"]
-[endselect]
+*ask_more
+[chara_mod name="protagonist" storage="protagonist_curious.png"]
+[voice storage="voice_protagonist_004.mp3"]
+[l]
+「それで、具体的に何が問題だったの？もっと詳しく聞かせて。」
 
-*LeaveHerAlone
-[chara_hide name="protagonist"]
-[chara_hide name="angry_woman"]
+[chara_mod name="angry_woman" storage="angry_woman_thinking.png"]
+[voice storage="voice_angry_woman_004.mp3"]
+[l]
+「うーん、実はプロジェクトがうまく進んでいなくて…」
+
+[jump target="end_conversation"]
+
+:end_conversation
 [cm]
-[bg storage="leave_scene.jpg" time=1000]
-[playbgm storage="lonely_bgm.mp3"]
-[wt]
-[trans time=1000 method="crossfade"]
-[t "主人公は彼女の望みを尊重して、カフェを後にした。"]
-[gameover]
-
-*ContinueTalking
-[chara_show name="angry_woman" storage="angry_woman_talk.png"]
-[chara_face name="protagonist" storage="protagonist_listen.png"]
-[s]
-[voice storage="protagonist_003.mp3"]
-主人公「何か気にかかることがあるなら、話してみませんか？」
-
-[s]
-[voice storage="angry_woman_003.mp3"]
-[chara_face name="angry_woman" storage="angry_woman_think.png"]
-怒っている女性「実は...」
-[s]
-; Continue storyline or close chapter
-[link target="next_chapter.ks" storage=""]
-
+[chara_hide name="all" time=500]
+[playbgm storage="normal_bgm.mp3"]
+[end]
 ```
 
-This script includes:
-- Scene setup with background and music.
-- Character displays and facial expressions.
-- Voice clips for each dialogue.
-- Emotional expression and dialogue to display character traits.
-- Choices that affect the outcome of the story, leading to different endings or paths.
+このスクリプトは以下の要素を含んでいます：
+- タイトルとカフェの背景設定
+- BGMの再生
+- 主人公と怒った女性のキャラクター表示と声の再生
+- 環境音の追加
+- 分岐点と選択肢の設定
+- シナリオの進展に応じたキャラクター表情と返答の変化
+- シナリオの終了処理
 
-Ensure to replace the placeholder paths (`protagonist_normal.png`, `cafe_bgm.mp3`, etc.) with actual production-quality assets and continue the narrative in a similarly structured manner in subsequent chapters.
+この設計は、プレイヤーの選択に基づく感情の変化とキャラクター間のダイナミックな対話を可能にしています。
 [return]

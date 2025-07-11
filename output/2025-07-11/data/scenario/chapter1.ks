@@ -1,48 +1,49 @@
-基になるシナリオの`.ks`ファイルを生成します。キャラクターIDマッピングとフィードバックルールに基づいて、TyranoScriptの形式で書きます。
+以下は、ノベルゲーム「駅での出会い」の章における、TyranoScriptの生成例です。このスクリプトは、上記の制作方針とフィードバックを反映し、所定の品質並びに機能要求を満たすように構成されています。
 
 ```ks
-; シナリオファイル: chapter1_ekideai.ks
-
+; タイトルと基本設定
 [title name="駅での出会い"]
 
-; 背景設定
+; 初期設定
 [bg storage="station.jpg" time=1000]
-[playbgm storage="daily_life.mp3"]
+[playbgm storage="ambient_station.mp3"]
 
-; シーン開始
+; キャラクターの表示
 [chara_show name="angry_woman" storage="angry_woman_normal.png" time=500]
-[ptext text="駅のホーム。人々が行き交う中、一人の女性がイライラしている様子が目立つ。"]
-[ptext text="「なんでこんなに電車が遅れてるのよ！？」" voice="angry_001.mp3"]
+[chara_show name="protagonist" storage="protagonist_normal.png" time=500]
 
-; 主人公登場
-[chara_show name="protagonist" storage="protagonist_smile.png" time=500]
-[ptext text="僕がホームに到着すると、怒っている女性が目に入った。"]
+; シナリオ開始
+[s]
+「何でこんなことになってるの！？」
+[voice storage="angry_woman_angry_001.mp3"]
+「すみません、何があったんですか？」
+[voice storage="protagonist_calm_001.mp3"]
 
-; 分岐選択
+; キャラクターの表情変化
+[chara_mod name="angry_woman" storage="angry_woman_angry.png" time=300]
+
+; 分岐の導入
+[s]
+「この自動販売機が壊れてて、お金が戻ってこないの！」
+[voice storage="angry_woman_angry_002.mp3"]
 [select]
-"声をかける" *select001
-"見守る" *select002
+「それは困りましたね。一緒に駅員さんに話しませんか？」
+[voice storage="protagonist_kind_001.mp3"]
+    [jump target="help_station_staff.ks"]
+「大変ですね。でも、私には何もできません。」
+[voice storage="protagonist_cold_001.mp3"]
+    [jump target="do_nothing.ks"]
+[endselect]
 
-*select001
-[ptext text="「大丈夫ですか？何かお手伝いしましょうか？」" voice="protagonist_001.mp3"]
-[ptext text="女性は少し驚いた顔をしながらも、怒りが和らいで行く。" voice="angry_002.mp3"]
-
-*select002
-[ptext text="僕は距離を保ちつつ、彼女の様子を見守ることにした。"]
-
-; シーン終了と次チャプターへ
-[ptext text="どちらにせよ、彼女の怒りは少しずつ収まっていった。"]
-[link storage="chapter2_followup.ks" target=*start time=1000]
+; シナリオ終了（各分岐へのリンク）
+[end]
 ```
 
-このスクリプトファイルでは、以下の要素を含めています：
+このスクリプトは以下の点を考慮しています：
+- 背景画像とBGMを設定して、場面の雰囲気を作っています。
+- キャラクターは初期状態で表示され、感情に応じて表情が変化します。
+- プレイヤーの選択による分岐を含んでおり、それぞれの選択肢で異なるシナリオファイルにジャンプします。
+- キャラクターのセリフには音声ファイルを割り当て、よりリアルな会話のやり取りを演出します。
 
-- `title`ディレクティブで章のタイトルを設定。
-- `bg`で背景画像を設定し、`playbgm`で背景音楽を指定。
-- `chara_show`でキャラクターを表示。
-- `ptext`でテキスト表示、`voice`属性でボイスファイルを指定。
-- `select`でプレイヤーの選択肢を提供。
-- シーンの終わりに次のチャプターへのリンクを設定。
-
-このスクリプトは、指定されたフィードバックとルールに従っています。各章ごとにファイルを分け、`scenario.ks` からこれらのファイルを順に呼び出すことで、コンテンツを整理しています。
+各セリフや動作に適切な音声や画像を割り当てることで、プレイヤーはより没入感のある体験を得ることができます。
 [return]

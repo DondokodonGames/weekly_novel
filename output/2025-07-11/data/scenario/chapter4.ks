@@ -1,65 +1,67 @@
-### TyranoScript シナリオファイル: last_conversation.ks
+以下は、指定されたガイドラインに従って生成されたTyranoScriptのサンプルです。このスクリプトは、「最後の会話」という章の内容を描写します。キャラクター、背景、音楽、声が適切にマッピングされ、選択肢と感情の変化が組み込まれています。
 
-```tyranoscript
+```ks
 [title name="最後の会話"]
 
-; 初期設定
-[s]
-[bg storage="room_background.jpg" time=1000]
-[playbgm storage="calm_scene.mp3"]
+; シナリオファイル開始
+[start]
 
-; キャラクターの登場
-[chara_show id="angry_woman" storage="angry_woman_normal.png" time=600]
-[chara_show id="protagonist" storage="protagonist_smile.png" time=600]
+; 背景設定
+[bg storage="room.jpg" time=1000]
 
-; プロタゴニストのセリフ
-[say name="protagonist"]
-「最後にもう一度だけ、話をしよう。」
+; BGM開始
+[playbgm storage="calm_theme.mp3"]
+
+; 主人公登場
+[chara_show name="protagonist" storage="protagonist_normal.png" time=1000]
+
+; 女性キャラクター登場
+[chara_show name="angry_woman" storage="angry_woman_serious.png" time=1000]
+
+; 主人公のセリフ
+[voice storage="protagonist_001.mp3"]
+[l]
+「最後に、ただ一つだけ聞かせてほしい。なぜ、いつも怒っているんだ？」
 
 ; 女性の反応
-[chara_mod id="angry_woman" storage="angry_woman_serious.png" time=500]
-[say name="angry_woman"]
-「…わかった。話すことはもう何もないと思っていたけれど。」
+[voice storage="angry_woman_001.mp3"]
+[l]
+「それは…」
 
-; 分岐の選択肢
-[select link="理解を示す" target=*understanding]
-[select link="問いただす" target=*questioning]
+[cm]
 
-*understanding
-[say name="protagonist"]
-「君の気持ちも理解しているつもりだ。辛かったよね。」
+; 女性の表情変化
+[chara_mod name="angry_woman" storage="angry_woman_smile.png" time=500]
 
-[chara_mod id="angry_woman" storage="angry_woman_softened.png" time=500]
-[say name="angry_woman"]
-「ええ、でも、あなたと話して少し楽になったわ。ありがとう。」
+; 続けて女性のセリフ
+[voice storage="angry_woman_002.mp3"]
+[l]
+「実は、怒ってるわけじゃないの。誤解を招くような顔つきをしているだけで…」
 
-[jump target="final_reaction"]
+; 主人公のセリフ
+[voice storage="protagonist_002.mp3"]
+[l]
+「そうだったんだ…初めて君の笑顔を見たよ。」
 
-*questioning
-[say name="protagonist"]
-「でも、本当にそれだけ？何か隠していることはないの？」
+; 選択肢
+[s]
+選択肢: 「どうして今まで笑わなかったの？」 {
+    [jump target="smile_reason.ks"]
+} else 「笑顔が似合うね」 {
+    [jump target="smile_compliment.ks"]
+}
+[e]
 
-[chara_mod id="angry_woman" storage="angry_woman_angry.png" time=500]
-[say name="angry_woman"]
-「！…あなたには関係ないわ。」
-
-[jump target="final_reaction"]
-
-; 最終リアクション
-*final_reaction
-[chara_mod id="angry_woman" storage="angry_woman_smiling.png" time=500]
-[say name="angry_woman"]
-「でも、あなたとのこの時間は大事だった。ありがとう。」
-
-; エンディングへの移行
-[say name="protagonist"]
-「どういたしまして。また、いつでも話しに来てください。」
-
-[bgm_stop time=1500]
-[chara_hide id="angry_woman" time=1000]
-[chara_hide id="protagonist" time=1000]
+; シナリオファイル終了
 [end]
 ```
 
-このスクリプトは、指定されたルールとキャラクターIDマッピングに基づいています。シナリオは感情の起伏、分岐の選択、キャラクターの進化を示し、視聴覚的な要素も同時に扱っています。それぞれのセクション（分岐、リアクション）は、読者に異なる感情を与えるよう設計されています。
+このスクリプトでは、以下の要素が取り入れられています：
+- 背景とBGMの初期設定。
+- キャラクターの表情の変化を含む動的な描写。
+- 音声ファイルを使用したリアルなキャラクターの声。
+- セリフを通じた性格の描写と感情の変化。
+- プレイヤーが選択する分岐点の提供。
+
+このスクリプトは、プレイヤーに数分間のゲームプレイを提供し、キャラクター間の感情の進展を示します。全体のストーリーラインに沿って、追加の章や詳細な設定が必要になるかもしれません。
 [return]
