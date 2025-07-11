@@ -1,0 +1,135 @@
+{
+  "art_style": "リアルなタッチで感情表現豊かなキャラクターデザイン",
+  "sound_mood": "静かで感情に呼応するピアノBGM",
+  "visual_theme": "夜の公園で話すような、静かでやさしい空気感",
+  "chapters": [
+    {
+      "chapter_index": 1,
+      "title": "駅での出会い",
+      "summary": "駅での些細な出来事から、女性が怒りを爆発させる。",
+      "backgrounds": [
+        "station.jpg"
+      ],
+      "bgm": "tense_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "protagonist"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "angry_001.mp3",
+          "text": "なんでこんなことになるの！？",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "protagonist",
+          "voice_file": "calm_001.mp3",
+          "text": "落ち着いて、何が起こったの？",
+          "safe_character": "protagonist"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "protagonist"
+      ]
+    },
+    {
+      "chapter_index": 2,
+      "title": "カフェでの対話",
+      "summary": "カフェに移動し、主人公が女性の誤解をやさしく解いていく。",
+      "backgrounds": [
+        "cafe.jpg"
+      ],
+      "bgm": "soft_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "protagonist"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "angry_002.mp3",
+          "text": "いつもいつも、こんなことばかり...",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "protagonist",
+          "voice_file": "calm_002.mp3",
+          "text": "大丈夫だよ、一緒に解決しよう。",
+          "safe_character": "protagonist"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "protagonist"
+      ]
+    },
+    {
+      "chapter_index": 3,
+      "title": "帰り道の和解",
+      "summary": "歩道を歩きながら、二人の間に理解が深まる。",
+      "backgrounds": [
+        "sidewalk.jpg"
+      ],
+      "bgm": "rising_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "protagonist"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "softening_001.mp3",
+          "text": "あなたのおかげで少し楽になったよ。",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "protagonist",
+          "voice_file": "calm_003.mp3",
+          "text": "いつも話を聞けて嬉しいよ。",
+          "safe_character": "protagonist"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "protagonist"
+      ]
+    },
+    {
+      "chapter_index": 4,
+      "title": "室内での真実",
+      "summary": "室内での最後の会話。女性が心を開いて本当の気持ちを明かす。",
+      "backgrounds": [
+        "indoor.jpg"
+      ],
+      "bgm": "emotional_piano.mp3",
+      "characters": [
+        "angry_woman",
+        "protagonist"
+      ],
+      "lines": [
+        {
+          "character": "angry_woman",
+          "voice_file": "crying_001.mp3",
+          "text": "ずっと怒ってばかりでごめんね、本当は怖かっただけなの...",
+          "safe_character": "angry_woman"
+        },
+        {
+          "character": "protagonist",
+          "voice_file": "calm_004.mp3",
+          "text": "君のそばにいることができて、僕は幸せだよ。",
+          "safe_character": "protagonist"
+        }
+      ],
+      "safe_characters": [
+        "angry_woman",
+        "protagonist"
+      ]
+    }
+  ],
+  "character_map": {
+    "angry_woman": "angry_woman",
+    "protagonist": "protagonist"
+  }
+}
