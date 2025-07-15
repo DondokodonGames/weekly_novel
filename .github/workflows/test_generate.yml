@@ -2,8 +2,8 @@ name: Test Novel Game Generator
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * 5"  # 毎週金曜 09:00 JST
+  #schedule:
+  #  - cron: "0 0 * * 5"  # 毎週金曜 09:00 JST
 
 jobs:
   test-build:
